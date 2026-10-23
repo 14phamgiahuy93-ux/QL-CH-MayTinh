@@ -1,7 +1,20 @@
 # QL-CH-MayTinh
+
 Hệ Thống Quản Lý Cửa Hàng Bán Máy Tính (Java OOP)
-1. Giới thiệu tổng quanĐồ án Quản Lý Cửa Hàng Bán Máy Tính được xây dựng bằng ngôn ngữ Java theo định hướng lập trình hướng đối tượng (OOP) và mô hình phân tầng. Điểm đặc trưng của hệ thống là tự cài đặt cấu trúc mảng thủ công (mở rộng kích thước linh hoạt khi đầy) thay thế hoàn toàn cho các thư viện dựng sẵn như ArrayList, nhằm rèn luyện tư duy thuật toán và quản lý bộ nhớ.   
-2. Cấu trúc thư mục dự ánCấu trúc các package và thành phần mã nguồn được phân chia theo tiêu chuẩn thực tế:   
+
+---
+
+## 1. Giới thiệu tổng quan
+
+Đồ án **Quản Lý Cửa Hàng Bán Máy Tính** được xây dựng bằng ngôn ngữ **Java** theo định hướng lập trình hướng đối tượng (OOP) và mô hình phân tầng. Điểm đặc trưng của hệ thống là **tự cài đặt cấu trúc mảng thủ công** (mở rộng kích thước linh hoạt khi đầy) thay thế hoàn toàn cho các thư viện dựng sẵn như `ArrayList`, nhằm rèn luyện tư duy thuật toán và quản lý bộ nhớ.   
+
+---
+
+## 2. Cấu trúc thư mục dự án
+
+Cấu trúc các package và thành phần mã nguồn được phân chia theo tiêu chuẩn thực tế:   
+
+```text
 QuanLyCuaHangMayTinh/
 │
 ├── data/                      # Thư mục lưu trữ dữ liệu văn bản (text files)
@@ -36,14 +49,14 @@ QuanLyCuaHangMayTinh/
     │
     └── main/                  # Chương trình chính
         └── Main.java          # Menu điều hướng ứng dụng
-    ```
+```
 
 ---
 
 ## 3. Thiết kế hướng đối tượng (OOP) cốt lõi
 
 ### A. Nhóm Sản Phẩm & Linh Kiện
-* **`SanPham` (Abstract Class):** Quản lý các thuộc tính chung gồm mã sản phẩm (`maSP`), tên (`tenSP`), hãng sản xuất (`hangSX`), giá nhập, giá bán, số lượng tồn kho, thời gian bảo hành[cite: 5]. Định nghĩa các phương thức trừu tượng `hienThiThongTin()`, `tinhGiaBan()`.
+* **`SanPham` (Abstract Class):** Quản lý các thuộc tính chung gồm mã sản phẩm (`maSP`), tên (`tenSP`), hãng sản xuất (`hangSX`), giá nhập, giá bán, số lượng tồn kho, thời gian bảo hành. Định nghĩa các phương thức trừu tượng `hienThiThongTin()`, `tinhGiaBan()`.
 * **Kế thừa đa cấp:** 
   * `MayTinh` kế thừa `SanPham` (bổ sung thông tin loại máy, CPU, RAM, SSD...).
   * `LinhKien` (Abstract) kế thừa `SanPham`, phân nhánh thành các chi tiết cụ thể như `CPU`, `RAM`, `CardDoHoa`, `OCung`, `Nguon` với các thông số kỹ thuật đặc thù riêng.
@@ -88,6 +101,8 @@ Mỗi module quản lý (`QuanLySanPham`, `QuanLyNhanVien`, `QuanLyKhachHang`, `
    Mở terminal tại thư mục chứa source code và thực hiện biên dịch các file `.java`:
    ```bash
    javac -d bin src/**/*.java
-
-1. **Chạy ứng dụng:**
-    java -cp bin main.Main
+   ```
+3. **Chạy ứng dụng:**
+   ```bash
+   java -cp bin main.Main
+   ```
