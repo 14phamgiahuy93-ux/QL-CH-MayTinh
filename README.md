@@ -28,6 +28,7 @@ QuanLyCuaHangMayTinh/
     │   ├── MayTinh.java       # Kế thừa SanPham
     │   ├── LinhKien.java      # (Abstract) Lớp cha các loại linh kiện
     │   ├── CPU.java, RAM.java, CardDoHoa.java, OCung.java, Nguon.java
+    |   ├── ChiTietSanPham.java    
     │   ├── Nguoi.java         # (Abstract) Lớp cha cho con người
     │   ├── NhanVien.java, QuanLy.java, KhachHang.java
     │   ├── HoaDon.java, ChiTietHoaDon.java
