@@ -28,12 +28,13 @@ QuanLyCuaHangMayTinh/
     │   ├── MayTinh.java       # Kế thừa SanPham
     │   ├── LinhKien.java      # (Abstract) Lớp cha các loại linh kiện
     │   ├── CPU.java, RAM.java, CardDoHoa.java, OCung.java, Nguon.java
+    |   ├── ChiTietSanPham.java
     │   ├── Nguoi.java         # (Abstract) Lớp cha cho con người
     │   ├── NhanVien.java, QuanLy.java, KhachHang.java
     │   ├── HoaDon.java, ChiTietHoaDon.java
     │   └── NhaCungCap.java, PhieuNhap.java, ChiTietPhieuNhap.java
     │
-    ├── interface_def/         # Định nghĩa các hành vi chung (Interface)
+    ├── interfaces/         # Định nghĩa các hành vi chung (Interface)
     │   └── IFileIO.java       # Chuẩn đọc/ghi dữ liệu
     │
     ├── manager/               # Các class quản lý mảng thủ công & thuật toán nghiệp vụ
