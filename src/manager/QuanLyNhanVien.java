@@ -1,9 +1,16 @@
 package manager;
 
 import entity.NhanVien;
+import entity.QuanLy;
+import interfaces.IFileIO;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Objects;
 
-public class QuanLyNhanVien {
+public class QuanLyNhanVien implements IFileIO {
     private NhanVien[] danhSach;
     private int soLuong;
 
@@ -103,4 +110,59 @@ public class QuanLyNhanVien {
         System.out.println("--------------------");
     }
 }
+
+    @Override
+    public void ghiFile(String tenFile) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(tenFile))) {
+            for (int i = 0; i < soLuong; i++) {
+                QuanLy nv = (QuanLy) danhSach[i];
+
+                writer.write(nv.getHoTen() + ";"
+                        + nv.getNgaySinh() + ";"
+                        + nv.getSoDienThoai() + ";"
+                        + nv.getEmail() + ";"
+                        + nv.getMaNV() + ";"
+                        + nv.getLuongCoBan() + ";"
+                        + nv.getPhuCap() + ";"
+                        + nv.getTienThuong() + ";"
+                        + nv.getPhuCapChucVu());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Lỗi khi ghi file: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void docFIle(String tenFile) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(tenFile))) {
+            String dong;
+            soLuong = 0;
+
+            while ((dong = reader.readLine()) != null) {
+                String[] thongTin = dong.split(";");
+                if (thongTin.length != 9) {
+                    System.out.println("Dòng dữ liệu không hợp lệ: " + dong);
+                    continue;
+                }
+
+                QuanLy nv = new QuanLy(
+                        thongTin[0],
+                        thongTin[1],
+                        thongTin[2],
+                        thongTin[3],
+                        thongTin[4],
+                        Double.parseDouble(thongTin[5]),
+                        Double.parseDouble(thongTin[6]),
+                        Double.parseDouble(thongTin[7]),
+                        Double.parseDouble(thongTin[8]));
+
+                if (!themNhanVien(nv)) {
+                    System.out.println("Không thể thêm nhân viên: " + nv.getMaNV());
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Lỗi khi đọc file: " + e.getMessage());
+        }
+    }
 }
