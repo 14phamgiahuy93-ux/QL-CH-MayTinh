@@ -1,5 +1,6 @@
 package entity;
 public class ChiTietHoaDon {
+
     private SanPham sanPham;
     private int soLuong;
     private double donGia;
@@ -9,12 +10,12 @@ public class ChiTietHoaDon {
     }
 
     public ChiTietHoaDon(SanPham sanPham, int soLuong, double donGia) {
-        this.sanPham = sanPham;
-        this.soLuong = soLuong;
-        this.donGia = donGia;
+        setSanPham(sanPham);
+        setSoLuong(soLuong);
+        setDonGia(donGia);
     }
 
-    // Getter và Setter
+    // Getter va Setter
     public SanPham getSanPham() {
         return sanPham;
     }
@@ -28,7 +29,9 @@ public class ChiTietHoaDon {
     }
 
     public void setSoLuong(int soLuong) {
-        this.soLuong = soLuong;
+        if (soLuong > 0) {
+            this.soLuong = soLuong;
+        }
     }
 
     public double getDonGia() {
@@ -36,10 +39,12 @@ public class ChiTietHoaDon {
     }
 
     public void setDonGia(double donGia) {
-        this.donGia = donGia;
+        if (donGia >= 0) {
+            this.donGia = donGia;
+        }
     }
 
-    // Tính thành tiền
+    // Tinh thanh tien
     public double tinhThanhTien() {
         return soLuong * donGia;
     }
