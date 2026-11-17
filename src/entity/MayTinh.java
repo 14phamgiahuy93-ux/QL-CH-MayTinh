@@ -1,66 +1,84 @@
 package entity;
-
-public class MayTinh extends SanPham{
+public class MayTinh extends SanPham {
     private String loaiMay;
     private String CPU;
     private int RAM;
     private int dungLuongSSD;
 
-    // Constructor
+    // Constructor mac dinh
     public MayTinh() {
         super();
     }
 
-    public MayTinh(String maSP, String tenSP, String hangSX, double giaNhap, double giaBan, int soLuongTon, int baoHanh, String loaiMay, String CPU, int RAM, int dungLuongSSD) {
-        super(maSP, tenSP, hangSX, giaNhap, giaBan, soLuongTon, baoHanh);
+    // Constructor co tham so
+    public MayTinh(String maSP, String tenSP, String hangSX,
+                   double giaNhap, double giaBan,
+                   int soLuongTon, int baoHanh,
+                   String loaiMay, String CPU,
+                   int RAM, int dungLuongSSD) {
 
-        this.loaiMay = loaiMay;
-        this.CPU = CPU;
-        this.RAM = RAM;
-        this.dungLuongSSD = dungLuongSSD;
+        super(maSP, tenSP, hangSX, giaNhap, giaBan,
+              soLuongTon, baoHanh);
+
+        setLoaiMay(loaiMay);
+        setCPU(CPU);
+        setRAM(RAM);
+        setDungLuongSSD(dungLuongSSD);
     }
 
-    // Getter va Setter
-    public String getLoaiMay(){
+    // Getter va Setter loai may
+    public String getLoaiMay() {
         return loaiMay;
     }
 
-    public void setLoaiMay(String loaiMay){
+    public void setLoaiMay(String loaiMay) {
         this.loaiMay = loaiMay;
     }
 
-    public String getCPU(){
+    // Getter va Setter CPU
+    public String getCPU() {
         return CPU;
     }
 
-    public void setCPU(String CPU){
+    public void setCPU(String CPU) {
         this.CPU = CPU;
     }
 
-    public int getRAM(){
+    // Getter va Setter RAM
+    public int getRAM() {
         return RAM;
     }
 
-    public void setRAM(int RAM){
-        this.RAM = RAM;
+    public void setRAM(int RAM) {
+        if (RAM >= 0) {
+            this.RAM = RAM;
+        } else {
+            System.out.println("RAM khong duoc am!");
+        }
     }
 
-    public int getDungLuongSSD(){
+    // Getter va Setter SSD
+    public int getDungLuongSSD() {
         return dungLuongSSD;
     }
 
-    public void setDungLuongSSD(int dungLuongSSD){
-        this.dungLuongSSD = dungLuongSSD;
+    public void setDungLuongSSD(int dungLuongSSD) {
+        if (dungLuongSSD >= 0) {
+            this.dungLuongSSD = dungLuongSSD;
+        } else {
+            System.out.println("Dung luong SSD khong duoc am!");
+        }
     }
 
-    // Ghi de phuong thuc
+    // Ghi de phuong thuc tinh gia ban
     @Override
-    public double tinhGiaBan(){
+    public double tinhGiaBan() {
         return getGiaBan();
     }
 
+    // Ghi de phuong thuc hien thi thong tin
     @Override
-    public void hienThiThongTin(){
+    public void hienThiThongTin() {
         System.out.println("=== MAY TINH ===");
         System.out.println("Ma SP: " + getMaSP());
         System.out.println("Ten SP: " + getTenSP());
