@@ -1,6 +1,4 @@
-
 package manager;
-
 import entity.NhanVien;
 import entity.QuanLy;
 import interfaces.IFileIO;
