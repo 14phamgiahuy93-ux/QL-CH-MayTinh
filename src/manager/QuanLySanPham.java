@@ -7,7 +7,8 @@ import entity.ChiTietSanPham;
 import interfaces.IFileIO;
 import utils.FileUtil;
 import utils.Validator;
-
+import java.util.HashMap;
+import java.util.Map;
 public class QuanLySanPham implements IFileIO {
 
     private SanPham[] danhSach;
@@ -320,4 +321,120 @@ public class QuanLySanPham implements IFileIO {
     public SanPham[] getDanhSach() {
         return danhSach;
     }
+    
+// Tim san pham theo nhieu tieu chi
+public void timSanPhamNhieuTieuChi(String tuKhoa) {
+
+    boolean timThay = false;
+
+    // Buoc 1: Tim chinh xac theo ma, ten hoac hang san xuat
+    for (int i = 0; i < soLuong; i++) {
+        SanPham sp = danhSach[i];
+
+        if (sp.getMaSP().equalsIgnoreCase(tuKhoa)
+                || sp.getTenSP().equalsIgnoreCase(tuKhoa)
+                || sp.getHangSX().equalsIgnoreCase(tuKhoa)) {
+
+            System.out.println("Tim thay chinh xac:");
+            sp.hienThiThongTin();
+            timThay = true;
+        }
+    }
+
+    if (timThay) {
+        return;
+    }
+
+    // Buoc 2: Tim gan dung
+    for (int i = 0; i < soLuong; i++) {
+        SanPham sp = danhSach[i];
+
+        if (sp.getMaSP().toLowerCase().contains(tuKhoa.toLowerCase())
+                || sp.getTenSP().toLowerCase().contains(tuKhoa.toLowerCase())
+                || sp.getHangSX().toLowerCase().contains(tuKhoa.toLowerCase())) {
+
+            System.out.println("Tim thay gan dung:");
+            sp.hienThiThongTin();
+            timThay = true;
+        }
+    }
+
+    if (!timThay) {
+        System.out.println("Khong tim thay san pham!");
+    }
+}
+
+    // 13. Thong ke theo hang san xuat va loai san pham
+    public void thongKeTheoNhieuKhoa() {
+
+        if (soLuong == 0) {
+            System.out.println("Danh sach san pham rong!");
+            return;
+        }
+
+        Map<String, double[]> thongKe = new HashMap<>();
+
+        for (int i = 0; i < soLuong; i++) {
+
+            SanPham sp = danhSach[i];
+
+            // Tao khoa thong ke tu hang san xuat va loai san pham
+            String khoa = sp.getHangSX() + " - "
+                    + sp.getClass().getSimpleName();
+
+            double[] soLieu = thongKe.get(khoa);
+
+            if (soLieu == null) {
+                soLieu = new double[3];
+                thongKe.put(khoa, soLieu);
+            }
+
+            // Dem so mat hang
+            soLieu[0]++;
+
+            // Tinh tong so luong ton
+            soLieu[1] += sp.getSoLuongTon();
+
+            // Tinh tong gia tri ton kho
+            soLieu[2] += sp.tinhGiaTriTonKho();
+        }
+
+        System.out.println("\n===== THONG KE SAN PHAM =====");
+
+        for (Map.Entry<String, double[]> entry : thongKe.entrySet()) {
+
+            double[] soLieu = entry.getValue();
+
+            System.out.println("\nNhom: " + entry.getKey());
+            System.out.println("So mat hang: " + (int) soLieu[0]);
+            System.out.println("Tong so luong ton: " + (int) soLieu[1]);
+            System.out.println("Tong gia tri ton kho: "
+                    + soLieu[2] + " VND");
+        }
+    }
+
+    // 14. Cap nhat so luong ton kho khi nhap hang
+    public boolean capNhatTonKho(String maSP, int soLuongNhap) {
+
+        if (soLuongNhap <= 0) {
+            System.out.println("So luong nhap phai lon hon 0!");
+            return false;
+        }
+
+        SanPham sp = laySanPham(maSP);
+
+        if (sp == null) {
+            System.out.println("Khong tim thay san pham!");
+            return false;
+        }
+
+        sp.setSoLuongTon(sp.getSoLuongTon() + soLuongNhap);
+
+        System.out.println("Cap nhat ton kho thanh cong!");
+        System.out.println("San pham: " + sp.getTenSP());
+        System.out.println("So luong ton moi: " + sp.getSoLuongTon());
+
+        return true;
+    }
+
 }
