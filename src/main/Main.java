@@ -1,5 +1,4 @@
 package main;
-
 import manager.QuanLySanPham;
 import manager.QuanLyNhanVien;
 import manager.QuanLyKhachHang;
@@ -140,9 +139,10 @@ public class Main {
             System.out.println("12. Kiem tra ton kho");
             System.out.println("13. Thong ke san pham");
             System.out.println("14. Them chi tiet san pham");
+            System.out.println("15. Dem tong so doi tuong san pham");
             System.out.println("0. Quay lai");
 
-            luaChon = Validator.readInt("Nhap lua chon: ", 0, 14);
+            luaChon = Validator.readInt("Nhap lua chon: ", 0, 15);
 
             switch (luaChon) {
                 case 1:
@@ -193,6 +193,11 @@ public class Main {
                     break;
                 case 14:
                     themChiTietSanPham();
+                    break;
+                case 15:
+                    System.out.println("\n========== DEM SAN PHAM ==========");
+                    System.out.println("Tong so doi tuong san pham da khoi tao: "
+                            + SanPham.getDemSanPham());
                     break;
             }
 
@@ -629,7 +634,9 @@ public class Main {
 
         HoaDon hd = new HoaDon(maHD, ngayLap, nv, kh);
 
-        int soChiTiet = Validator.readInt("Nhap so loai san pham trong hoa don: ", 1, 100);
+        int soChiTiet = Validator.readInt(
+                "Nhap so loai san pham trong hoa don: ", 1, 100
+        );
 
         for (int i = 0; i < soChiTiet; i++) {
 
@@ -643,7 +650,9 @@ public class Main {
                 continue;
             }
 
-            int soLuong = Validator.readInt("Nhap so luong mua: ", 1, 100000);
+            int soLuong = Validator.readInt(
+                    "Nhap so luong mua: ", 1, 100000
+            );
 
             if (soLuong > sp.getSoLuongTon()) {
                 System.out.println("So luong ton kho khong du. Bo qua chi tiet nay.");
@@ -706,7 +715,9 @@ public class Main {
                 }
                 case 5: {
                     String maPN = Validator.readString("Nhap ma phieu nhap: ");
-                    String ngayMoi = Validator.readDate("Nhap ngay nhap moi (yyyy-MM-dd): ");
+                    String ngayMoi = Validator.readDate(
+                            "Nhap ngay nhap moi (yyyy-MM-dd): "
+                    );
                     qlpn.suaNgayNhap(maPN, ngayMoi);
                     break;
                 }
@@ -753,7 +764,9 @@ public class Main {
 
         PhieuNhap pn = new PhieuNhap(maPN, ngayNhap, ncc, nv);
 
-        int soChiTiet = Validator.readInt("Nhap so loai san pham nhap: ", 1, 100);
+        int soChiTiet = Validator.readInt(
+                "Nhap so loai san pham nhap: ", 1, 100
+        );
 
         for (int i = 0; i < soChiTiet; i++) {
 
@@ -767,8 +780,13 @@ public class Main {
                 continue;
             }
 
-            int soLuong = Validator.readInt("Nhap so luong nhap: ", 1, 100000);
-            double donGiaNhap = Validator.readDouble("Nhap don gia nhap: ", 0);
+            int soLuong = Validator.readInt(
+                    "Nhap so luong nhap: ", 1, 100000
+            );
+
+            double donGiaNhap = Validator.readDouble(
+                    "Nhap don gia nhap: ", 0
+            );
 
             ChiTietPhieuNhap ct = new ChiTietPhieuNhap(
                     sp, soLuong, donGiaNhap
