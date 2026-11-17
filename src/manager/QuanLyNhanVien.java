@@ -223,4 +223,12 @@ public class QuanLyNhanVien implements IFileIO {
             }
         }
     }
+    public NhanVien layNhanVien(String maNV) {
+    for (int i = 0; i < soLuong; i++) {
+        if (danhSach[i].getMaNV().equalsIgnoreCase(maNV)) {
+            return danhSach[i];
+        }
+    }
+    return null;
+    }
 }
