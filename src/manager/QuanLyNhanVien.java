@@ -302,87 +302,127 @@ public class QuanLyNhanVien implements IFileIO {
     @Override
     public void ghiFile(String tenFile) {
 
-        StringBuilder noiDung = new StringBuilder();
+    StringBuilder noiDung = new StringBuilder();
 
-        for (int i = 0; i < soLuong; i++) {
+    for (int i = 0; i < soLuong; i++) {
 
-            NhanVien nv = danhSach[i];
+        NhanVien nv = danhSach[i];
 
-            noiDung.append(nv.getHoTen()).append(";")
-                   .append(nv.getNgaySinh()).append(";")
-                   .append(nv.getSoDienThoai()).append(";")
-                   .append(nv.getEmail()).append(";")
-                   .append(nv.getMaNV()).append(";")
-                   .append(nv.getLuongCoBan()).append(";")
-                   .append(nv.getPhuCap()).append(";")
-                   .append(nv.getTienThuong()).append(";");
-
-            if (nv instanceof QuanLy) {
-                QuanLy ql = (QuanLy) nv;
-                noiDung.append(ql.getPhuCapChucVu());
-            }
-
-            if (i < soLuong - 1) {
-                noiDung.append("\n");
-            }
+        if (nv == null) {
+            continue;
         }
 
-        FileUtil.ghiChuoi(tenFile, noiDung.toString());
+        if (nv instanceof QuanLy) {
+            noiDung.append("QL;");
+        } else {
+            noiDung.append("NV;");
+        }
 
-        System.out.println("Da ghi danh sach nhan vien vao file!");
+        noiDung.append(nv.getHoTen()).append(";")
+               .append(nv.getNgaySinh()).append(";")
+               .append(nv.getSoDienThoai()).append(";")
+               .append(nv.getEmail()).append(";")
+               .append(nv.getMaNV()).append(";")
+               .append(nv.getLuongCoBan()).append(";")
+               .append(nv.getPhuCap()).append(";")
+               .append(nv.getTienThuong());
+
+        if (nv instanceof QuanLy) {
+            QuanLy ql = (QuanLy) nv;
+            noiDung.append(";").append(ql.getPhuCapChucVu());
+        }
+
+        noiDung.append("\n");
     }
 
+    FileUtil.ghiChuoi(tenFile, noiDung.toString());
+
+    System.out.println("Da ghi danh sach nhan vien vao file!");
+}
     // 10. Doc file
     @Override
     public void docFile(String tenFile) {
 
-        String noiDung = FileUtil.docChuoi(tenFile);
+    String noiDung = FileUtil.docChuoi(tenFile);
 
-        if (noiDung == null || noiDung.trim().isEmpty()) {
-            System.out.println("File nhan vien rong!");
-            return;
+    if (noiDung == null || noiDung.trim().isEmpty()) {
+        System.out.println("File nhan vien rong!");
+        return;
+    }
+
+    NhanVien[] danhSachCu = danhSach;
+    int soLuongCu = soLuong;
+
+    danhSach = new NhanVien[10];
+    soLuong = 0;
+
+    String[] cacDong = noiDung.split("\\R");
+
+    for (String dong : cacDong) {
+
+        if (dong.trim().isEmpty()) {
+            continue;
         }
 
-        danhSach = new NhanVien[10];
-        soLuong = 0;
+        String[] data = dong.split(";", -1);
 
-        String[] cacDong = noiDung.split("\\R");
+        try {
 
-        for (String dong : cacDong) {
+            NhanVien nv = null;
 
-            if (dong.trim().isEmpty()) {
-                continue;
-            }
+            // Nhan vien quan ly
+            if (data.length == 10 && data[0].equals("QL")) {
 
-            String[] data = dong.split(";", -1);
-
-            if (data.length != 9 || data[8].isEmpty()) {
-                continue;
-            }
-
-            try {
-
-                NhanVien nv = new QuanLy(
-                    data[0],
+                nv = new QuanLy(
                     data[1],
                     data[2],
                     data[3],
                     data[4],
-                    Double.parseDouble(data[5]),
+                    data[5],
                     Double.parseDouble(data[6]),
                     Double.parseDouble(data[7]),
-                    Double.parseDouble(data[8])
+                    Double.parseDouble(data[8]),
+                    Double.parseDouble(data[9])
+                );
+            }
+
+            // Nhan vien thong thuong
+            else if (data.length == 9 && data[0].equals("NV")) {
+
+                // Hien tai NhanVien la abstract.
+                // Can co class con cu the de tao nhan vien thuong.
+                System.out.println(
+                    "Chua co class nhan vien thong thuong de doc dong: "
+                    + dong
                 );
 
-                themNhanVien(nv);
-
-            } catch (NumberFormatException e) {
-                System.out.println("Loi du lieu nhan vien: " + dong);
+                continue;
             }
-        }
 
-        System.out.println("Da doc danh sach nhan vien tu file!");
+            else {
+                System.out.println("Dong du lieu khong hop le: " + dong);
+                continue;
+            }
+
+            themNhanVien(nv);
+
+        } catch (NumberFormatException e) {
+
+            System.out.println("Loi du lieu nhan vien: " + dong);
+        }
     }
+
+    if (soLuong == 0) {
+
+        danhSach = danhSachCu;
+        soLuong = soLuongCu;
+
+        System.out.println("Khong doc duoc nhan vien, giu danh sach cu!");
+        return;
+    }
+
+    System.out.println("Da doc danh sach nhan vien tu file!");
+}
 
     // 11. Lay nhan vien theo ma
     public NhanVien layNhanVien(String maNV) {
