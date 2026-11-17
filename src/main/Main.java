@@ -1,4 +1,5 @@
 package main;
+
 import manager.QuanLySanPham;
 import manager.QuanLyNhanVien;
 import manager.QuanLyKhachHang;
@@ -140,9 +141,10 @@ public class Main {
             System.out.println("13. Thong ke san pham");
             System.out.println("14. Them chi tiet san pham");
             System.out.println("15. Dem tong so doi tuong san pham");
+            System.out.println("16. Tim kiem san pham theo nhieu tieu chi");
             System.out.println("0. Quay lai");
 
-            luaChon = Validator.readInt("Nhap lua chon: ", 0, 15);
+            luaChon = Validator.readInt("Nhap lua chon: ", 0, 16);
 
             switch (luaChon) {
                 case 1:
@@ -199,6 +201,13 @@ public class Main {
                     System.out.println("Tong so doi tuong san pham da khoi tao: "
                             + SanPham.getDemSanPham());
                     break;
+                case 16: {
+                    String tuKhoa = Validator.readString(
+                            "Nhap tu khoa tim kiem san pham: "
+                    );
+                    qlsp.timSanPhamNhieuTieuChi(tuKhoa);
+                    break;
+                }
             }
 
         } while (luaChon != 0);
@@ -430,9 +439,10 @@ public class Main {
             System.out.println("4. Sua thong tin nhan vien");
             System.out.println("5. Xoa nhan vien");
             System.out.println("6. Thong ke nhan vien");
+            System.out.println("7. Tim kiem nhan vien theo nhieu tieu chi");
             System.out.println("0. Quay lai");
 
-            luaChon = Validator.readInt("Nhap lua chon: ", 0, 6);
+            luaChon = Validator.readInt("Nhap lua chon: ", 0, 7);
 
             switch (luaChon) {
                 case 1:
@@ -461,6 +471,13 @@ public class Main {
                 case 6:
                     qlnv.thongKeTheoLoaiNhanVien();
                     break;
+                case 7: {
+                    String tuKhoa = Validator.readString(
+                            "Nhap tu khoa tim kiem nhan vien: "
+                    );
+                    qlnv.timNhanVienNhieuTieuChi(tuKhoa);
+                    break;
+                }
             }
 
         } while (luaChon != 0);
@@ -507,9 +524,10 @@ public class Main {
             System.out.println("4. Sua khach hang");
             System.out.println("5. Xoa khach hang");
             System.out.println("6. Thong ke khach hang theo dia chi");
+            System.out.println("7. Tim kiem khach hang theo nhieu tieu chi");
             System.out.println("0. Quay lai");
 
-            luaChon = Validator.readInt("Nhap lua chon: ", 0, 6);
+            luaChon = Validator.readInt("Nhap lua chon: ", 0, 7);
 
             switch (luaChon) {
                 case 1:
@@ -536,6 +554,13 @@ public class Main {
                 case 6:
                     qlkh.thongKeTheoDiaChi();
                     break;
+                case 7: {
+                    String tuKhoa = Validator.readString(
+                            "Nhap tu khoa tim kiem khach hang: "
+                    );
+                    qlkh.timKhachHangNhieuTieuChi(tuKhoa);
+                    break;
+                }
             }
 
         } while (luaChon != 0);
@@ -574,9 +599,10 @@ public class Main {
             System.out.println("5. Thong ke doanh thu");
             System.out.println("6. Thong ke theo nhan vien");
             System.out.println("7. Thong ke theo khach hang");
+            System.out.println("8. Tim kiem hoa don theo nhieu tieu chi");
             System.out.println("0. Quay lai");
 
-            luaChon = Validator.readInt("Nhap lua chon: ", 0, 7);
+            luaChon = Validator.readInt("Nhap lua chon: ", 0, 8);
 
             switch (luaChon) {
                 case 1:
@@ -604,6 +630,13 @@ public class Main {
                 case 7:
                     qlhd.thongKeTheoKhachHang();
                     break;
+                case 8: {
+                    String tuKhoa = Validator.readString(
+                            "Nhap tu khoa tim kiem hoa don: "
+                    );
+                    qlhd.timHoaDonNhieuTieuChi(tuKhoa);
+                    break;
+                }
             }
 
         } while (luaChon != 0);
@@ -692,9 +725,10 @@ public class Main {
             System.out.println("6. Thong ke tien nhap");
             System.out.println("7. Thong ke theo nha cung cap");
             System.out.println("8. Thong ke theo nhan vien");
+            System.out.println("9. Tim kiem phieu nhap theo nhieu tieu chi");
             System.out.println("0. Quay lai");
 
-            luaChon = Validator.readInt("Nhap lua chon: ", 0, 8);
+            luaChon = Validator.readInt("Nhap lua chon: ", 0, 9);
 
             switch (luaChon) {
                 case 1:
@@ -730,6 +764,13 @@ public class Main {
                 case 8:
                     qlpn.thongKeTheoNhanVien();
                     break;
+                case 9: {
+                    String tuKhoa = Validator.readString(
+                            "Nhap tu khoa tim kiem phieu nhap: "
+                    );
+                    qlpn.timPhieuNhapNhieuTieuChi(tuKhoa);
+                    break;
+                }
             }
 
         } while (luaChon != 0);
