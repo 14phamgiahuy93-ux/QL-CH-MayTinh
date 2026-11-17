@@ -1,5 +1,6 @@
 package manager;
 import entity.SanPham;
+import utils.Validator;
 public class QuanLySanPham {
     private SanPham[] danhSach;
     private int soLuong;
@@ -16,8 +17,32 @@ public class QuanLySanPham {
     }
 
     public void suaSanPham(String maSP) {
-        // Viết code sửa theo yêu cầu đồ án
+    for (int i = 0; i < soLuong; i++) {
+        if (danhSach[i].getMaSP().equalsIgnoreCase(maSP)) {
+
+            System.out.println("Nhập thông tin mới:");
+
+            String tenSP = Validator.readString("Tên sản phẩm: ");
+            String hangSX = Validator.readString("Hãng sản xuất: ");
+            double giaNhap = Validator.readDouble("Giá nhập: ", 0);
+            double giaBan = Validator.readDouble("Giá bán: ", 0);
+            int soLuongTon = Validator.readInt("Số lượng tồn: ", 0, 100000);
+            int baoHanh = Validator.readInt("Bảo hành (tháng): ", 0, 120);
+
+            danhSach[i].setTenSP(tenSP);
+            danhSach[i].setHangSX(hangSX);
+            danhSach[i].setGiaNhap(giaNhap);
+            danhSach[i].setGiaBan(giaBan);
+            danhSach[i].setSoLuongTon(soLuongTon);
+            danhSach[i].setBaoHanh(baoHanh);
+
+            System.out.println("Cập nhật sản phẩm thành công!");
+            return;
+        }
     }
+
+    System.out.println("Không tìm thấy sản phẩm có mã: " + maSP);
+}
 
     public void xoaSanPham(String maSP) {
         for (int i = 0; i < soLuong; i++) {
