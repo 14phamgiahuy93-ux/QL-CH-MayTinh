@@ -14,6 +14,7 @@ public class QuanLyKhachHang implements IFileIO {
     private KhachHang[] danhSach;
     private int soLuong;
 
+    // Constructor
     public QuanLyKhachHang() {
         danhSach = new KhachHang[10];
         soLuong = 0;
@@ -24,6 +25,7 @@ public class QuanLyKhachHang implements IFileIO {
 
         if (kh == null || kh.getMaKH() == null
                 || kh.getMaKH().trim().isEmpty()) {
+
             System.out.println("Thong tin khach hang khong hop le!");
             return;
         }
@@ -33,8 +35,10 @@ public class QuanLyKhachHang implements IFileIO {
             return;
         }
 
-        if (soLuong == danhSach.length) {
-            danhSach = Arrays.copyOf(danhSach, danhSach.length * 2);
+        if (soLuong >= danhSach.length) {
+            danhSach = Arrays.copyOf(
+                danhSach, danhSach.length * 2
+            );
         }
 
         danhSach[soLuong++] = kh;
@@ -45,14 +49,14 @@ public class QuanLyKhachHang implements IFileIO {
     // 2. Them nhieu khach hang
     public void themNhieuKhachHang(KhachHang[] ds, int k) {
 
-        if (ds == null || k <= 0) {
+        if (ds == null || k <= 0 || k > ds.length) {
             System.out.println("Danh sach khong hop le!");
             return;
         }
 
         int soThem = 0;
 
-        for (int i = 0; i < k && i < ds.length; i++) {
+        for (int i = 0; i < k; i++) {
 
             int truocDo = soLuong;
 
@@ -76,7 +80,7 @@ public class QuanLyKhachHang implements IFileIO {
             return;
         }
 
-        System.out.println("Chon thong tin can sua:");
+        System.out.println("\n===== SUA KHACH HANG =====");
         System.out.println("1. Ho ten");
         System.out.println("2. Ngay sinh");
         System.out.println("3. So dien thoai");
@@ -120,11 +124,21 @@ public class QuanLyKhachHang implements IFileIO {
     // 4. Xoa khach hang
     public void xoaKhachHang(String maKH) {
 
+        if (maKH == null || maKH.trim().isEmpty()) {
+            System.out.println("Ma khach hang khong hop le!");
+            return;
+        }
+
         int index = -1;
 
         for (int i = 0; i < soLuong; i++) {
 
-            if (Objects.equals(danhSach[i].getMaKH(), maKH)) {
+            if (danhSach[i] != null
+                    && Objects.equals(
+                        danhSach[i].getMaKH(),
+                        maKH.trim()
+                    )) {
+
                 index = i;
                 break;
             }
@@ -175,11 +189,22 @@ public class QuanLyKhachHang implements IFileIO {
 
             KhachHang kh = danhSach[i];
 
-            String ma = kh.getMaKH() == null ? "" : kh.getMaKH();
-            String ten = kh.getHoTen() == null ? "" : kh.getHoTen();
+            if (kh == null) {
+                continue;
+            }
+
+            String ma = kh.getMaKH() == null
+                    ? "" : kh.getMaKH();
+
+            String ten = kh.getHoTen() == null
+                    ? "" : kh.getHoTen();
+
             String sdt = kh.getSoDienThoai() == null
                     ? "" : kh.getSoDienThoai();
-            String email = kh.getEmail() == null ? "" : kh.getEmail();
+
+            String email = kh.getEmail() == null
+                    ? "" : kh.getEmail();
+
             String diaChi = kh.getDiaChi() == null
                     ? "" : kh.getDiaChi();
 
@@ -199,16 +224,27 @@ public class QuanLyKhachHang implements IFileIO {
             return;
         }
 
-        // Tim gan dung neu khong co ket qua chinh xac
+        // Tim gan dung
         for (int i = 0; i < soLuong; i++) {
 
             KhachHang kh = danhSach[i];
 
-            String ma = kh.getMaKH() == null ? "" : kh.getMaKH();
-            String ten = kh.getHoTen() == null ? "" : kh.getHoTen();
+            if (kh == null) {
+                continue;
+            }
+
+            String ma = kh.getMaKH() == null
+                    ? "" : kh.getMaKH();
+
+            String ten = kh.getHoTen() == null
+                    ? "" : kh.getHoTen();
+
             String sdt = kh.getSoDienThoai() == null
                     ? "" : kh.getSoDienThoai();
-            String email = kh.getEmail() == null ? "" : kh.getEmail();
+
+            String email = kh.getEmail() == null
+                    ? "" : kh.getEmail();
+
             String diaChi = kh.getDiaChi() == null
                     ? "" : kh.getDiaChi();
 
@@ -240,9 +276,17 @@ public class QuanLyKhachHang implements IFileIO {
         System.out.println("\n===== DANH SACH KHACH HANG =====");
 
         for (int i = 0; i < soLuong; i++) {
-            System.out.println("Khach hang thu " + (i + 1) + ":");
-            danhSach[i].hienThiThongTin();
-            System.out.println("--------------------");
+
+            if (danhSach[i] != null) {
+
+                System.out.println(
+                    "Khach hang thu " + (i + 1) + ":"
+                );
+
+                danhSach[i].hienThiThongTin();
+
+                System.out.println("--------------------");
+            }
         }
     }
 
@@ -258,7 +302,13 @@ public class QuanLyKhachHang implements IFileIO {
 
         for (int i = 0; i < soLuong; i++) {
 
-            String diaChi = danhSach[i].getDiaChi();
+            KhachHang kh = danhSach[i];
+
+            if (kh == null) {
+                continue;
+            }
+
+            String diaChi = kh.getDiaChi();
 
             if (diaChi == null || diaChi.trim().isEmpty()) {
                 diaChi = "Chua cap nhat";
@@ -270,7 +320,9 @@ public class QuanLyKhachHang implements IFileIO {
             );
         }
 
-        System.out.println("\n===== THONG KE KHACH HANG THEO DIA CHI =====");
+        System.out.println(
+            "\n===== THONG KE KHACH HANG THEO DIA CHI ====="
+        );
 
         for (Map.Entry<String, Integer> entry : thongKe.entrySet()) {
 
@@ -290,16 +342,17 @@ public class QuanLyKhachHang implements IFileIO {
 
             KhachHang kh = danhSach[i];
 
+            if (kh == null) {
+                continue;
+            }
+
             noiDung.append(kh.getHoTen()).append(";")
                    .append(kh.getNgaySinh()).append(";")
                    .append(kh.getSoDienThoai()).append(";")
                    .append(kh.getEmail()).append(";")
                    .append(kh.getMaKH()).append(";")
-                   .append(kh.getDiaChi());
-
-            if (i < soLuong - 1) {
-                noiDung.append("\n");
-            }
+                   .append(kh.getDiaChi())
+                   .append("\n");
         }
 
         FileUtil.ghiChuoi(tenFile, noiDung.toString());
@@ -318,7 +371,9 @@ public class QuanLyKhachHang implements IFileIO {
             return;
         }
 
-        // Xoa danh sach cu
+        KhachHang[] danhSachCu = danhSach;
+        int soLuongCu = soLuong;
+
         danhSach = new KhachHang[10];
         soLuong = 0;
 
@@ -333,20 +388,43 @@ public class QuanLyKhachHang implements IFileIO {
             String[] thongTin = dong.split(";", -1);
 
             if (thongTin.length != 6) {
-                System.out.println("Dong du lieu khong hop le: " + dong);
+                System.out.println(
+                    "Dong du lieu khong hop le: " + dong
+                );
                 continue;
             }
 
-            KhachHang kh = new KhachHang(
-                thongTin[0],
-                thongTin[1],
-                thongTin[2],
-                thongTin[3],
-                thongTin[4],
-                thongTin[5]
+            try {
+
+                KhachHang kh = new KhachHang(
+                    thongTin[0],
+                    thongTin[1],
+                    thongTin[2],
+                    thongTin[3],
+                    thongTin[4],
+                    thongTin[5]
+                );
+
+                themKhachHang(kh);
+
+            } catch (Exception e) {
+
+                System.out.println(
+                    "Khong the doc dong: " + dong
+                );
+            }
+        }
+
+        if (soLuong == 0) {
+
+            danhSach = danhSachCu;
+            soLuong = soLuongCu;
+
+            System.out.println(
+                "Khong doc duoc khach hang, giu danh sach cu!"
             );
 
-            themKhachHang(kh);
+            return;
         }
 
         System.out.println("Doc file khach hang hoan tat!");
@@ -355,14 +433,16 @@ public class QuanLyKhachHang implements IFileIO {
     // 11. Lay khach hang theo ma
     public KhachHang layKhachHang(String maKH) {
 
-        if (maKH == null) {
+        if (maKH == null || maKH.trim().isEmpty()) {
             return null;
         }
 
         for (int i = 0; i < soLuong; i++) {
 
-            if (danhSach[i].getMaKH() != null
-                    && danhSach[i].getMaKH().equalsIgnoreCase(maKH)) {
+            if (danhSach[i] != null
+                    && danhSach[i].getMaKH() != null
+                    && danhSach[i].getMaKH()
+                    .equalsIgnoreCase(maKH.trim())) {
 
                 return danhSach[i];
             }
