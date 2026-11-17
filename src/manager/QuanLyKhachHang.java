@@ -2,8 +2,12 @@ package manager;
 import entity.KhachHang;
 import interfaces.IFileIO;
 import utils.FileUtil;
+import utils.Validator;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Scanner;
 
 public class QuanLyKhachHang implements IFileIO {
 
@@ -15,124 +19,225 @@ public class QuanLyKhachHang implements IFileIO {
         soLuong = 0;
     }
 
-    // Them khach hang
+    // 1. Them khach hang
     public void themKhachHang(KhachHang kh) {
-        if (kh == null) {
-            System.out.println("Thong tin khach hang khong hop le.");
+
+        if (kh == null || kh.getMaKH() == null
+                || kh.getMaKH().trim().isEmpty()) {
+            System.out.println("Thong tin khach hang khong hop le!");
+            return;
+        }
+
+        if (layKhachHang(kh.getMaKH()) != null) {
+            System.out.println("Ma khach hang da ton tai!");
             return;
         }
 
         if (soLuong == danhSach.length) {
-            System.out.println("Danh sach khach hang da day.");
+            danhSach = Arrays.copyOf(danhSach, danhSach.length * 2);
+        }
+
+        danhSach[soLuong++] = kh;
+
+        System.out.println("Them khach hang thanh cong!");
+    }
+
+    // 2. Them nhieu khach hang
+    public void themNhieuKhachHang(KhachHang[] ds, int k) {
+
+        if (ds == null || k <= 0) {
+            System.out.println("Danh sach khong hop le!");
             return;
         }
 
-        for (int i = 0; i < soLuong; i++) {
-            if (Objects.equals(danhSach[i].getMaKH(), kh.getMaKH())) {
-                System.out.println("Ma khach hang da ton tai.");
-                return;
+        int soThem = 0;
+
+        for (int i = 0; i < k && i < ds.length; i++) {
+
+            int truocDo = soLuong;
+
+            themKhachHang(ds[i]);
+
+            if (soLuong > truocDo) {
+                soThem++;
             }
         }
 
-        danhSach[soLuong] = kh;
-        soLuong++;
-
-        System.out.println("Them khach hang thanh cong.");
+        System.out.println("Da them " + soThem + " khach hang!");
     }
 
-    // Sua khach hang
+    // 3. Sua khach hang
     public void suaKhachHang(String maKH) {
-        Scanner scanner = new Scanner(System.in);
+
+        KhachHang kh = layKhachHang(maKH);
+
+        if (kh == null) {
+            System.out.println("Khong tim thay khach hang!");
+            return;
+        }
+
+        System.out.println("Chon thong tin can sua:");
+        System.out.println("1. Ho ten");
+        System.out.println("2. Ngay sinh");
+        System.out.println("3. So dien thoai");
+        System.out.println("4. Email");
+        System.out.println("5. Dia chi");
+
+        int luaChon = Validator.readInt(
+            "Lua chon: ", 1, 5
+        );
+
+        String giaTriMoi = Validator.readString(
+            "Nhap gia tri moi: "
+        );
+
+        switch (luaChon) {
+
+            case 1:
+                kh.setHoTen(giaTriMoi);
+                break;
+
+            case 2:
+                kh.setNgaySinh(giaTriMoi);
+                break;
+
+            case 3:
+                kh.setSoDienThoai(giaTriMoi);
+                break;
+
+            case 4:
+                kh.setEmail(giaTriMoi);
+                break;
+
+            case 5:
+                kh.setDiaChi(giaTriMoi);
+                break;
+        }
+
+        System.out.println("Cap nhat khach hang thanh cong!");
+    }
+
+    // 4. Xoa khach hang
+    public void xoaKhachHang(String maKH) {
+
+        int index = -1;
 
         for (int i = 0; i < soLuong; i++) {
+
+            if (Objects.equals(danhSach[i].getMaKH(), maKH)) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index == -1) {
+            System.out.println("Khong tim thay khach hang!");
+            return;
+        }
+
+        for (int i = index; i < soLuong - 1; i++) {
+            danhSach[i] = danhSach[i + 1];
+        }
+
+        danhSach[--soLuong] = null;
+
+        System.out.println("Xoa khach hang thanh cong!");
+    }
+
+    // 5. Tim khach hang theo ma
+    public void timKhachHang(String maKH) {
+
+        KhachHang kh = layKhachHang(maKH);
+
+        if (kh != null) {
+            System.out.println("Tim thay khach hang!");
+            kh.hienThiThongTin();
+        } else {
+            System.out.println("Khong tim thay khach hang!");
+        }
+    }
+
+    // 6. Tim khach hang theo nhieu tieu chi
+    public void timKhachHangNhieuTieuChi(String tuKhoa) {
+
+        if (tuKhoa == null || tuKhoa.trim().isEmpty()) {
+            System.out.println("Tu khoa khong hop le!");
+            return;
+        }
+
+        tuKhoa = tuKhoa.trim();
+        String tuKhoaLower = tuKhoa.toLowerCase();
+
+        boolean timThay = false;
+
+        // Tim chinh xac truoc
+        for (int i = 0; i < soLuong; i++) {
+
             KhachHang kh = danhSach[i];
 
-            if (Objects.equals(kh.getMaKH(), maKH)) {
-                System.out.println("Chon thong tin can sua:");
-                System.out.println("1. Ho ten");
-                System.out.println("2. Ngay sinh");
-                System.out.println("3. So dien thoai");
-                System.out.println("4. Email");
-                System.out.println("5. Dia chi");
-                System.out.print("Lua chon: ");
+            String ma = kh.getMaKH() == null ? "" : kh.getMaKH();
+            String ten = kh.getHoTen() == null ? "" : kh.getHoTen();
+            String sdt = kh.getSoDienThoai() == null
+                    ? "" : kh.getSoDienThoai();
+            String email = kh.getEmail() == null ? "" : kh.getEmail();
+            String diaChi = kh.getDiaChi() == null
+                    ? "" : kh.getDiaChi();
 
-                String luaChon = scanner.nextLine();
+            if (ma.equalsIgnoreCase(tuKhoa)
+                    || ten.equalsIgnoreCase(tuKhoa)
+                    || sdt.equalsIgnoreCase(tuKhoa)
+                    || email.equalsIgnoreCase(tuKhoa)
+                    || diaChi.equalsIgnoreCase(tuKhoa)) {
 
-                System.out.print("Nhap gia tri moi: ");
-                String giaTriMoi = scanner.nextLine();
-
-                switch (luaChon) {
-                    case "1":
-                        kh.setHoTen(giaTriMoi);
-                        break;
-
-                    case "2":
-                        kh.setNgaySinh(giaTriMoi);
-                        break;
-
-                    case "3":
-                        kh.setSoDienThoai(giaTriMoi);
-                        break;
-
-                    case "4":
-                        kh.setEmail(giaTriMoi);
-                        break;
-
-                    case "5":
-                        kh.setDiaChi(giaTriMoi);
-                        break;
-
-                    default:
-                        System.out.println("Lua chon khong hop le.");
-                        return;
-                }
-
-                System.out.println("Cap nhat khach hang thanh cong.");
-                return;
+                System.out.println("Tim thay chinh xac:");
+                kh.hienThiThongTin();
+                timThay = true;
             }
         }
 
-        System.out.println("Khong tim thay khach hang co ma " + maKH);
-    }
-
-    // Xoa khach hang
-    public void xoaKhachHang(String maKH) {
-        for (int i = 0; i < soLuong; i++) {
-            if (Objects.equals(danhSach[i].getMaKH(), maKH)) {
-
-                for (int j = i; j < soLuong - 1; j++) {
-                    danhSach[j] = danhSach[j + 1];
-                }
-
-                danhSach[soLuong - 1] = null;
-                soLuong--;
-
-                System.out.println("Xoa khach hang thanh cong.");
-                return;
-            }
-        }
-
-        System.out.println("Khong tim thay khach hang co ma " + maKH);
-    }
-
-    // Tim khach hang
-    public void timKhachHang(String maKH) {
-        for (int i = 0; i < soLuong; i++) {
-            if (Objects.equals(danhSach[i].getMaKH(), maKH)) {
-                danhSach[i].hienThiThongTin();
-                return;
-            }
-        }
-
-        System.out.println("Khong tim thay khach hang co ma " + maKH);
-    }
-
-    // Hien thi danh sach
-    public void hienThiDanhSach() {
-        if (soLuong == 0) {
-            System.out.println("Danh sach khach hang dang trong.");
+        if (timThay) {
             return;
         }
+
+        // Tim gan dung neu khong co ket qua chinh xac
+        for (int i = 0; i < soLuong; i++) {
+
+            KhachHang kh = danhSach[i];
+
+            String ma = kh.getMaKH() == null ? "" : kh.getMaKH();
+            String ten = kh.getHoTen() == null ? "" : kh.getHoTen();
+            String sdt = kh.getSoDienThoai() == null
+                    ? "" : kh.getSoDienThoai();
+            String email = kh.getEmail() == null ? "" : kh.getEmail();
+            String diaChi = kh.getDiaChi() == null
+                    ? "" : kh.getDiaChi();
+
+            if (ma.toLowerCase().contains(tuKhoaLower)
+                    || ten.toLowerCase().contains(tuKhoaLower)
+                    || sdt.contains(tuKhoa)
+                    || email.toLowerCase().contains(tuKhoaLower)
+                    || diaChi.toLowerCase().contains(tuKhoaLower)) {
+
+                System.out.println("Tim thay gan dung:");
+                kh.hienThiThongTin();
+                timThay = true;
+            }
+        }
+
+        if (!timThay) {
+            System.out.println("Khong tim thay khach hang!");
+        }
+    }
+
+    // 7. Hien thi danh sach
+    public void hienThiDanhSach() {
+
+        if (soLuong == 0) {
+            System.out.println("Danh sach khach hang dang trong!");
+            return;
+        }
+
+        System.out.println("\n===== DANH SACH KHACH HANG =====");
 
         for (int i = 0; i < soLuong; i++) {
             System.out.println("Khach hang thu " + (i + 1) + ":");
@@ -141,12 +246,48 @@ public class QuanLyKhachHang implements IFileIO {
         }
     }
 
-    // Ghi file
+    // 8. Thong ke theo dia chi
+    public void thongKeTheoDiaChi() {
+
+        if (soLuong == 0) {
+            System.out.println("Danh sach khach hang rong!");
+            return;
+        }
+
+        Map<String, Integer> thongKe = new HashMap<>();
+
+        for (int i = 0; i < soLuong; i++) {
+
+            String diaChi = danhSach[i].getDiaChi();
+
+            if (diaChi == null || diaChi.trim().isEmpty()) {
+                diaChi = "Chua cap nhat";
+            }
+
+            thongKe.put(
+                diaChi,
+                thongKe.getOrDefault(diaChi, 0) + 1
+            );
+        }
+
+        System.out.println("\n===== THONG KE KHACH HANG THEO DIA CHI =====");
+
+        for (Map.Entry<String, Integer> entry : thongKe.entrySet()) {
+
+            System.out.println("Dia chi: " + entry.getKey());
+            System.out.println("So khach hang: " + entry.getValue());
+            System.out.println("--------------------");
+        }
+    }
+
+    // 9. Ghi file
     @Override
     public void ghiFile(String tenFile) {
+
         StringBuilder noiDung = new StringBuilder();
 
         for (int i = 0; i < soLuong; i++) {
+
             KhachHang kh = danhSach[i];
 
             noiDung.append(kh.getHoTen()).append(";")
@@ -157,36 +298,35 @@ public class QuanLyKhachHang implements IFileIO {
                    .append(kh.getDiaChi());
 
             if (i < soLuong - 1) {
-                noiDung.append(System.lineSeparator());
+                noiDung.append("\n");
             }
         }
 
         FileUtil.ghiChuoi(tenFile, noiDung.toString());
+
+        System.out.println("Ghi file khach hang thanh cong!");
     }
 
-    // Doc file
+    // 10. Doc file
     @Override
     public void docFile(String tenFile) {
 
         String noiDung = FileUtil.docChuoi(tenFile);
 
-        // Xoa du lieu cu
-        soLuong = 0;
-
-        for (int i = 0; i < danhSach.length; i++) {
-            danhSach[i] = null;
-        }
-
-        if (noiDung == null || noiDung.isEmpty()) {
-            System.out.println("File khach hang rong.");
+        if (noiDung == null || noiDung.trim().isEmpty()) {
+            System.out.println("File khach hang rong!");
             return;
         }
+
+        // Xoa danh sach cu
+        danhSach = new KhachHang[10];
+        soLuong = 0;
 
         String[] cacDong = noiDung.split("\\R");
 
         for (String dong : cacDong) {
 
-            if (dong.isEmpty()) {
+            if (dong.trim().isEmpty()) {
                 continue;
             }
 
@@ -195,11 +335,6 @@ public class QuanLyKhachHang implements IFileIO {
             if (thongTin.length != 6) {
                 System.out.println("Dong du lieu khong hop le: " + dong);
                 continue;
-            }
-
-            if (soLuong == danhSach.length) {
-                System.out.println("Danh sach khach hang da day.");
-                break;
             }
 
             KhachHang kh = new KhachHang(
@@ -213,84 +348,35 @@ public class QuanLyKhachHang implements IFileIO {
 
             themKhachHang(kh);
         }
+
+        System.out.println("Doc file khach hang hoan tat!");
     }
-    public void timKhachHangNhieuTieuChi(String tuKhoa) {
-    boolean timThay = false;
 
-    // Tim chinh xac truoc
-    for (int i = 0; i < soLuong; i++) {
-        KhachHang kh = danhSach[i];
+    // 11. Lay khach hang theo ma
+    public KhachHang layKhachHang(String maKH) {
 
-        if (kh.getMaKH().equalsIgnoreCase(tuKhoa)
-                || kh.getHoTen().equalsIgnoreCase(tuKhoa)
-                || kh.getSoDienThoai().equalsIgnoreCase(tuKhoa)
-                || kh.getEmail().equalsIgnoreCase(tuKhoa)
-                || kh.getDiaChi().equalsIgnoreCase(tuKhoa)) {
-
-            kh.hienThiThongTin();
-            timThay = true;
+        if (maKH == null) {
+            return null;
         }
-    }
 
-    // Neu khong co ket qua chinh xac thi tim gan dung
-    if (!timThay) {
         for (int i = 0; i < soLuong; i++) {
-            KhachHang kh = danhSach[i];
 
-            if (kh.getMaKH().toLowerCase().contains(tuKhoa.toLowerCase())
-                    || kh.getHoTen().toLowerCase().contains(tuKhoa.toLowerCase())
-                    || kh.getSoDienThoai().contains(tuKhoa)
-                    || kh.getEmail().toLowerCase().contains(tuKhoa.toLowerCase())
-                    || kh.getDiaChi().toLowerCase().contains(tuKhoa.toLowerCase())) {
+            if (danhSach[i].getMaKH() != null
+                    && danhSach[i].getMaKH().equalsIgnoreCase(maKH)) {
 
-                kh.hienThiThongTin();
-                timThay = true;
-            }
-        }
-    }
-
-    if (!timThay) {
-        System.out.println("Khong tim thay khach hang!");
-    }
-}
-    public void thongKeTheoDiaChi() {
-    for (int i = 0; i < soLuong; i++) {
-        String diaChi = danhSach[i].getDiaChi();
-
-        boolean daThongKe = false;
-
-        for (int j = 0; j < i; j++) {
-            if (danhSach[j].getDiaChi().equalsIgnoreCase(diaChi)) {
-                daThongKe = true;
-                break;
+                return danhSach[i];
             }
         }
 
-        if (daThongKe) {
-            continue;
-        }
-
-        int dem = 0;
-
-        for (int j = 0; j < soLuong; j++) {
-            if (danhSach[j].getDiaChi().equalsIgnoreCase(diaChi)) {
-                dem++;
-            }
-        }
-
-        System.out.println("Dia chi: " + diaChi);
-        System.out.println("So khach hang: " + dem);
-        System.out.println("--------------------");
-    }
-}
-    public void themNhieuKhachHang(KhachHang[] ds, int k) {
-    if (ds == null || k < 0 || k > ds.length) {
-        System.out.println("Danh sach khong hop le!");
-        return;
+        return null;
     }
 
-    for (int i = 0; i < k; i++) {
-        themKhachHang(ds[i]);
+    // 12. Getters
+    public int getSoLuong() {
+        return soLuong;
     }
-}
+
+    public KhachHang[] getDanhSach() {
+        return danhSach;
+    }
 }
