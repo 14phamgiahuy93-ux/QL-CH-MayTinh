@@ -1,4 +1,5 @@
 package manager;
+import entity.SanPham;
 public class QuanLySanPham {
     private SanPham[] danhSach;
     private int soLuong;
@@ -72,4 +73,12 @@ public class QuanLySanPham {
             }
         }
     }
+    public SanPham laySanPham(String maSP) {
+    for (int i = 0; i < soLuong; i++) {
+        if (danhSach[i].getMaSP().equalsIgnoreCase(maSP)) {
+            return danhSach[i];
+        }
+    }
+    return null;
+}
 }
