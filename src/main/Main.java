@@ -21,11 +21,11 @@ public class Main {
 
     // ================= FILE DU LIEU =================
 
-    private static final String FILE_SAN_PHAM = "sanpham.txt";
-    private static final String FILE_NHAN_VIEN = "nhanvien.txt";
-    private static final String FILE_KHACH_HANG = "khachhang.txt";
-    private static final String FILE_HOA_DON = "hoadon.txt";
-    private static final String FILE_PHIEU_NHAP = "phieunhap.txt";
+    private static final String FILE_SAN_PHAM = "data/sanpham.txt";
+    private static final String FILE_NHAN_VIEN = "data/nhanvien.txt";
+    private static final String FILE_KHACH_HANG = "data/khachhang.txt";
+    private static final String FILE_HOA_DON = "data/hoadon.txt";
+    private static final String FILE_PHIEU_NHAP = "data/phieunhap.txt";
 
     // ================= CAC DOI TUONG QUAN LY =================
 
