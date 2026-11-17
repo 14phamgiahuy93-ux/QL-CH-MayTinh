@@ -23,6 +23,7 @@ public class OCung extends LinhKien {
 
     @Override
     public void hienThiThongTin() {
+        System.out.println("=== O Cung ===");
         System.out.println("Ổ Cứng: " + tenSP + " | Loại: " + loaiOCung + " | Dung lượng: " + dungLuong + "GB | Giá: " + giaBan);
     }
 }
