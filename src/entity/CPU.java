@@ -32,7 +32,9 @@ public class CPU extends LinhKien{
     }
 
     public void setSoNhan(int soNhan){
+        if (soNhan >= 0) {
         this.soNhan = soNhan;
+        }
     }
 
     public double getXungNhip(){
@@ -40,7 +42,9 @@ public class CPU extends LinhKien{
     }
 
     public void setXungNhip(double xungNhip){
+        if (xungNhip >= 0){
         this.xungNhip = xungNhip;
+        }
     }
 
     // Ghi de phuong thuc
