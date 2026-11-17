@@ -4,8 +4,15 @@ import manager.QuanLyNhanVien;
 import manager.QuanLyKhachHang;
 import manager.QuanLyHoaDon;
 import manager.QuanLyPhieuNhap;
+
 import entity.SanPham;
 import entity.MayTinh;
+import entity.CPU;
+import entity.RAM;
+import entity.CardDoHoa;
+import entity.OCung;
+import entity.Nguon;
+
 import entity.NhanVien;
 import entity.QuanLy;
 import entity.KhachHang;
@@ -19,23 +26,17 @@ import utils.Validator;
 
 public class Main {
 
-    // ================= FILE DU LIEU =================
-
     private static final String FILE_SAN_PHAM = "data/sanpham.txt";
     private static final String FILE_NHAN_VIEN = "data/nhanvien.txt";
     private static final String FILE_KHACH_HANG = "data/khachhang.txt";
     private static final String FILE_HOA_DON = "data/hoadon.txt";
     private static final String FILE_PHIEU_NHAP = "data/phieunhap.txt";
 
-    // ================= CAC DOI TUONG QUAN LY =================
-
     private static QuanLySanPham qlsp;
     private static QuanLyNhanVien qlnv;
     private static QuanLyKhachHang qlkh;
     private static QuanLyHoaDon qlhd;
     private static QuanLyPhieuNhap qlpn;
-
-    // ================= MAIN =================
 
     public static void main(String[] args) {
 
@@ -59,23 +60,18 @@ public class Main {
                 case 1:
                     menuSanPham();
                     break;
-
                 case 2:
                     menuNhanVien();
                     break;
-
                 case 3:
                     menuKhachHang();
                     break;
-
                 case 4:
                     menuHoaDon();
                     break;
-
                 case 5:
                     menuPhieuNhap();
                     break;
-
                 case 0:
                     ghiDuLieu();
                     System.out.println("Da luu du lieu. Tam biet!");
@@ -85,43 +81,28 @@ public class Main {
         } while (luaChon != 0);
     }
 
-    // ================= KHOI TAO =================
-
     private static void khoiTaoQuanLy() {
-
         qlsp = new QuanLySanPham();
         qlnv = new QuanLyNhanVien();
         qlkh = new QuanLyKhachHang();
 
-        // Hoa don can san pham, nhan vien va khach hang
         qlhd = new QuanLyHoaDon(qlsp, qlnv, qlkh);
-
-        // Phieu nhap can san pham va nhan vien
         qlpn = new QuanLyPhieuNhap(qlsp, qlnv);
     }
 
-    // ================= DOC DU LIEU =================
-
     private static void docDuLieu() {
-
         System.out.println("\n========== DOC DU LIEU TU FILE ==========");
 
-        // Phai doc cac du lieu goc truoc
         qlsp.docFile(FILE_SAN_PHAM);
         qlnv.docFile(FILE_NHAN_VIEN);
         qlkh.docFile(FILE_KHACH_HANG);
-
-        // Sau do moi doc hoa don va phieu nhap
         qlhd.docFile(FILE_HOA_DON);
         qlpn.docFile(FILE_PHIEU_NHAP);
 
         System.out.println("Da doc xong du lieu!");
     }
 
-    // ================= GHI DU LIEU =================
-
     private static void ghiDuLieu() {
-
         System.out.println("\n========== LUU DU LIEU VAO FILE ==========");
 
         qlsp.ghiFile(FILE_SAN_PHAM);
@@ -133,9 +114,7 @@ public class Main {
         System.out.println("Da luu xong du lieu!");
     }
 
-    // =========================================================
-    //                      SAN PHAM
-    // =========================================================
+    // ================= SAN PHAM =================
 
     private static void menuSanPham() {
 
@@ -144,55 +123,59 @@ public class Main {
         do {
             System.out.println("\n========== QUAN LY SAN PHAM ==========");
             System.out.println("1. Them may tinh");
-            System.out.println("2. Hien thi danh sach san pham");
-            System.out.println("3. Tim san pham theo ma");
-            System.out.println("4. Sua san pham");
-            System.out.println("5. Xoa san pham");
-            System.out.println("6. Sap xep san pham theo gia");
-            System.out.println("7. Kiem tra ton kho");
-            System.out.println("8. Thong ke san pham");
+            System.out.println("2. Them CPU");
+            System.out.println("3. Them RAM");
+            System.out.println("4. Them card do hoa");
+            System.out.println("5. Them o cung");
+            System.out.println("6. Them nguon");
+            System.out.println("7. Hien thi danh sach san pham");
+            System.out.println("8. Tim san pham theo ma");
+            System.out.println("9. Sua san pham");
+            System.out.println("10. Xoa san pham");
+            System.out.println("11. Sap xep san pham theo gia");
+            System.out.println("12. Kiem tra ton kho");
+            System.out.println("13. Thong ke san pham");
             System.out.println("0. Quay lai");
 
-            luaChon = Validator.readInt("Nhap lua chon: ", 0, 8);
+            luaChon = Validator.readInt("Nhap lua chon: ", 0, 13);
 
             switch (luaChon) {
+                case 1: themMayTinh(); break;
+                case 2: themCPU(); break;
+                case 3: themRAM(); break;
+                case 4: themCardDoHoa(); break;
+                case 5: themOCung(); break;
+                case 6: themNguon(); break;
+                case 7: qlsp.hienThiDanhSach(); break;
 
-                case 1:
-                    themMayTinh();
-                    break;
-
-                case 2:
-                    qlsp.hienThiDanhSach();
-                    break;
-
-                case 3: {
+                case 8: {
                     String maSP = Validator.readString("Nhap ma san pham: ");
                     qlsp.timSanPham(maSP);
                     break;
                 }
 
-                case 4: {
+                case 9: {
                     String maSP = Validator.readString("Nhap ma san pham can sua: ");
                     qlsp.suaSanPham(maSP);
                     break;
                 }
 
-                case 5: {
+                case 10: {
                     String maSP = Validator.readString("Nhap ma san pham can xoa: ");
                     qlsp.xoaSanPham(maSP);
                     break;
                 }
 
-                case 6:
+                case 11:
                     qlsp.sapXepTheoGia();
                     qlsp.hienThiDanhSach();
                     break;
 
-                case 7:
+                case 12:
                     qlsp.kiemTraTonKho();
                     break;
 
-                case 8:
+                case 13:
                     qlsp.thongKeTheoNhieuKhoa();
                     break;
             }
@@ -216,31 +199,171 @@ public class Main {
 
         String loaiMay = Validator.readString("Nhap loai may: ");
         String CPU = Validator.readString("Nhap CPU: ");
+
         int RAM = Validator.readInt("Nhap dung luong RAM: ", 1, 1024);
         int dungLuongSSD = Validator.readInt("Nhap dung luong SSD: ", 1, 100000);
 
         MayTinh mt = new MayTinh(
-                maSP,
-                tenSP,
-                hangSX,
-                giaNhap,
-                giaBan,
-                soLuongTon,
-                baoHanh,
-                loaiMay,
-                CPU,
-                RAM,
-                dungLuongSSD
+                maSP, tenSP, hangSX,
+                giaNhap, giaBan, soLuongTon, baoHanh,
+                loaiMay, CPU, RAM, dungLuongSSD
         );
 
         qlsp.themSanPham(mt);
-
-        System.out.println("Da them may tinh!");
     }
 
-    // =========================================================
-    //                      NHAN VIEN
-    // =========================================================
+    private static void themCPU() {
+
+        System.out.println("\n========== THEM CPU ==========");
+
+        String maSP = Validator.readString("Ma san pham: ");
+        String tenSP = Validator.readString("Ten CPU: ");
+        String hangSX = Validator.readString("Hang san xuat: ");
+
+        double giaNhap = Validator.readDouble("Gia nhap: ", 0);
+        double giaBan = Validator.readDouble("Gia ban: ", 0);
+
+        int soLuongTon = Validator.readInt("So luong ton: ", 0, Integer.MAX_VALUE);
+        int baoHanh = Validator.readInt("Bao hanh (thang): ", 0, 120);
+
+        String loai = Validator.readString("Loai linh kien: ");
+        String thongSo = Validator.readString("Thong so ky thuat: ");
+        String socket = Validator.readString("Socket: ");
+
+        int soNhan = Validator.readInt("So nhan: ", 1, 128);
+        double xungNhip = Validator.readDouble("Xung nhip (GHz): ", 0);
+
+        CPU cpu = new CPU(
+                maSP, tenSP, hangSX,
+                giaNhap, giaBan, soLuongTon, baoHanh,
+                loai, thongSo, socket, soNhan, xungNhip
+        );
+
+        qlsp.themSanPham(cpu);
+    }
+
+    private static void themRAM() {
+
+        System.out.println("\n========== THEM RAM ==========");
+
+        String maSP = Validator.readString("Ma san pham: ");
+        String tenSP = Validator.readString("Ten RAM: ");
+        String hangSX = Validator.readString("Hang san xuat: ");
+
+        double giaNhap = Validator.readDouble("Gia nhap: ", 0);
+        double giaBan = Validator.readDouble("Gia ban: ", 0);
+
+        int soLuongTon = Validator.readInt("So luong ton: ", 0, Integer.MAX_VALUE);
+        int baoHanh = Validator.readInt("Bao hanh (thang): ", 0, 120);
+
+        String loai = Validator.readString("Loai linh kien: ");
+        String thongSo = Validator.readString("Thong so ky thuat: ");
+
+        int dungLuong = Validator.readInt("Dung luong RAM (GB): ", 1, 1024);
+        String loaiRAM = Validator.readString("Loai RAM (DDR4/DDR5): ");
+        int tocDoBus = Validator.readInt("Toc do Bus (MHz): ", 1, 100000);
+
+        RAM ram = new RAM(
+                maSP, tenSP, hangSX,
+                giaNhap, giaBan, soLuongTon, baoHanh,
+                loai, thongSo, dungLuong, loaiRAM, tocDoBus
+        );
+
+        qlsp.themSanPham(ram);
+    }
+
+    private static void themCardDoHoa() {
+
+        System.out.println("\n========== THEM CARD DO HOA ==========");
+
+        String maSP = Validator.readString("Ma san pham: ");
+        String tenSP = Validator.readString("Ten card: ");
+        String hangSX = Validator.readString("Hang san xuat: ");
+
+        double giaNhap = Validator.readDouble("Gia nhap: ", 0);
+        double giaBan = Validator.readDouble("Gia ban: ", 0);
+
+        int soLuongTon = Validator.readInt("So luong ton: ", 0, Integer.MAX_VALUE);
+        int baoHanh = Validator.readInt("Bao hanh (thang): ", 0, 120);
+
+        String loai = Validator.readString("Loai linh kien: ");
+        String thongSo = Validator.readString("Thong so ky thuat: ");
+
+        int VRAM = Validator.readInt("Dung luong VRAM (GB): ", 1, 100);
+        String chip = Validator.readString("Chip do hoa: ");
+
+        CardDoHoa card = new CardDoHoa(
+                maSP, tenSP, hangSX,
+                giaNhap, giaBan, soLuongTon, baoHanh,
+                loai, thongSo, VRAM, chip
+        );
+
+        qlsp.themSanPham(card);
+    }
+
+    private static void themOCung() {
+
+        System.out.println("\n========== THEM O CUNG ==========");
+
+        String maSP = Validator.readString("Ma san pham: ");
+        String tenSP = Validator.readString("Ten o cung: ");
+        String hangSX = Validator.readString("Hang san xuat: ");
+
+        double giaNhap = Validator.readDouble("Gia nhap: ", 0);
+        double giaBan = Validator.readDouble("Gia ban: ", 0);
+
+        int soLuongTon = Validator.readInt("So luong ton: ", 0, Integer.MAX_VALUE);
+        int baoHanh = Validator.readInt("Bao hanh (thang): ", 0, 120);
+
+        String loai = Validator.readString("Loai linh kien: ");
+        String thongSo = Validator.readString("Thong so ky thuat: ");
+
+        int dungLuong = Validator.readInt("Dung luong (GB): ", 1, 1000000);
+        String loaiOCung = Validator.readString("Loai o cung (SSD/HDD): ");
+
+        OCung oc = new OCung(
+                maSP, tenSP, hangSX,
+                giaNhap, giaBan, soLuongTon, baoHanh,
+                loai, thongSo, dungLuong, loaiOCung
+        );
+
+        qlsp.themSanPham(oc);
+    }
+
+    private static void themNguon() {
+
+        System.out.println("\n========== THEM NGUON ==========");
+
+        String maSP = Validator.readString("Ma san pham: ");
+        String tenSP = Validator.readString("Ten nguon: ");
+        String hangSX = Validator.readString("Hang san xuat: ");
+
+        double giaNhap = Validator.readDouble("Gia nhap: ", 0);
+        double giaBan = Validator.readDouble("Gia ban: ", 0);
+
+        int soLuongTon = Validator.readInt("So luong ton: ", 0, Integer.MAX_VALUE);
+        int baoHanh = Validator.readInt("Bao hanh (thang): ", 0, 120);
+
+        String loai = Validator.readString("Loai linh kien: ");
+        String thongSo = Validator.readString("Thong so ky thuat: ");
+
+        int congSuat = Validator.readInt("Cong suat (W): ", 1, 10000);
+        String chungNhan = Validator.readString("Chung nhan (80 Plus): ");
+
+        Nguon nguon = new Nguon(
+                maSP, tenSP, hangSX,
+                giaBan, soLuongTon, congSuat, chungNhan
+        );
+
+        nguon.setGiaNhap(giaNhap);
+        nguon.setBaoHanh(baoHanh);
+        nguon.setLoaiLinhKien(loai);
+        nguon.setThongSoKyThuat(thongSo);
+
+        qlsp.themSanPham(nguon);
+    }
+
+    // ================= NHAN VIEN =================
 
     private static void menuNhanVien() {
 
@@ -259,38 +382,29 @@ public class Main {
             luaChon = Validator.readInt("Nhap lua chon: ", 0, 6);
 
             switch (luaChon) {
-
                 case 1:
                     themNhanVienQuanLy();
                     break;
-
                 case 2:
                     qlnv.hienThiDanhSach();
                     break;
-
                 case 3: {
                     String maNV = Validator.readString("Nhap ma nhan vien: ");
                     qlnv.timNhanVien(maNV);
                     break;
                 }
-
                 case 4: {
                     String maNV = Validator.readString("Nhap ma nhan vien can sua: ");
-                    int luaChonSua = Validator.readInt(
-                            "Nhap muc can sua (1-8): ", 1, 8
-                    );
+                    int luaChonSua = Validator.readInt("Nhap muc can sua (1-8): ", 1, 8);
                     String giaTriMoi = Validator.readString("Nhap gia tri moi: ");
-
                     qlnv.suaThongTinNhanVien(maNV, luaChonSua, giaTriMoi);
                     break;
                 }
-
                 case 5: {
                     String maNV = Validator.readString("Nhap ma nhan vien can xoa: ");
                     qlnv.xoaNhanVien(maNV);
                     break;
                 }
-
                 case 6:
                     qlnv.thongKeTheoLoaiNhanVien();
                     break;
@@ -304,9 +418,9 @@ public class Main {
         System.out.println("\n========== THEM NHAN VIEN QUAN LY ==========");
 
         String hoTen = Validator.readString("Nhap ho ten: ");
-        String ngaySinh = Validator.readString("Nhap ngay sinh: ");
-        String soDienThoai = Validator.readString("Nhap so dien thoai: ");
-        String email = Validator.readString("Nhap email: ");
+        String ngaySinh = Validator.readDate("Nhap ngay sinh (yyyy-MM-dd): ");
+        String soDienThoai = Validator.readPhone("Nhap so dien thoai: ");
+        String email = Validator.readEmail("Nhap email: ");
         String maNV = Validator.readString("Nhap ma nhan vien: ");
 
         double luongCoBan = Validator.readDouble("Nhap luong co ban: ", 0);
@@ -315,27 +429,18 @@ public class Main {
         double phuCapChucVu = Validator.readDouble("Nhap phu cap chuc vu: ", 0);
 
         QuanLy nv = new QuanLy(
-                hoTen,
-                ngaySinh,
-                soDienThoai,
-                email,
-                maNV,
-                luongCoBan,
-                phuCap,
-                tienThuong,
-                phuCapChucVu
+                hoTen, ngaySinh, soDienThoai, email, maNV,
+                luongCoBan, phuCap, tienThuong, phuCapChucVu
         );
 
         if (qlnv.themNhanVien(nv)) {
             System.out.println("Them nhan vien thanh cong!");
         } else {
-            System.out.println("Them nhan vien that bai!");
+            System.out.println("Them nhan vien that bai! Ma nhan vien co the da ton tai.");
         }
     }
 
-    // =========================================================
-    //                      KHACH HANG
-    // =========================================================
+    // ================= KHACH HANG =================
 
     private static void menuKhachHang() {
 
@@ -354,33 +459,27 @@ public class Main {
             luaChon = Validator.readInt("Nhap lua chon: ", 0, 6);
 
             switch (luaChon) {
-
                 case 1:
                     themKhachHang();
                     break;
-
                 case 2:
                     qlkh.hienThiDanhSach();
                     break;
-
                 case 3: {
                     String maKH = Validator.readString("Nhap ma khach hang: ");
                     qlkh.timKhachHang(maKH);
                     break;
                 }
-
                 case 4: {
                     String maKH = Validator.readString("Nhap ma khach hang can sua: ");
                     qlkh.suaKhachHang(maKH);
                     break;
                 }
-
                 case 5: {
                     String maKH = Validator.readString("Nhap ma khach hang can xoa: ");
                     qlkh.xoaKhachHang(maKH);
                     break;
                 }
-
                 case 6:
                     qlkh.thongKeTheoDiaChi();
                     break;
@@ -394,29 +493,20 @@ public class Main {
         System.out.println("\n========== THEM KHACH HANG ==========");
 
         String hoTen = Validator.readString("Nhap ho ten: ");
-        String ngaySinh = Validator.readString("Nhap ngay sinh: ");
-        String soDienThoai = Validator.readString("Nhap so dien thoai: ");
-        String email = Validator.readString("Nhap email: ");
+        String ngaySinh = Validator.readDate("Nhap ngay sinh (yyyy-MM-dd): ");
+        String soDienThoai = Validator.readPhone("Nhap so dien thoai: ");
+        String email = Validator.readEmail("Nhap email: ");
         String maKH = Validator.readString("Nhap ma khach hang: ");
         String diaChi = Validator.readString("Nhap dia chi: ");
 
         KhachHang kh = new KhachHang(
-                hoTen,
-                ngaySinh,
-                soDienThoai,
-                email,
-                maKH,
-                diaChi
+                hoTen, ngaySinh, soDienThoai, email, maKH, diaChi
         );
 
         qlkh.themKhachHang(kh);
-
-        System.out.println("Da them khach hang!");
     }
 
-    // =========================================================
-    //                       HOA DON
-    // =========================================================
+    // ================= HOA DON =================
 
     private static void menuHoaDon() {
 
@@ -436,35 +526,28 @@ public class Main {
             luaChon = Validator.readInt("Nhap lua chon: ", 0, 7);
 
             switch (luaChon) {
-
                 case 1:
                     lapHoaDon();
                     break;
-
                 case 2:
                     qlhd.hienThiDanhSach();
                     break;
-
                 case 3: {
                     String maHD = Validator.readString("Nhap ma hoa don: ");
                     qlhd.timHoaDon(maHD);
                     break;
                 }
-
                 case 4: {
                     String maHD = Validator.readString("Nhap ma hoa don can xoa: ");
                     qlhd.xoaHoaDon(maHD);
                     break;
                 }
-
                 case 5:
                     qlhd.thongKeDoanhThu();
                     break;
-
                 case 6:
                     qlhd.thongKeTheoNhanVien();
                     break;
-
                 case 7:
                     qlhd.thongKeTheoKhachHang();
                     break;
@@ -478,7 +561,7 @@ public class Main {
         System.out.println("\n========== LAP HOA DON ==========");
 
         String maHD = Validator.readString("Nhap ma hoa don: ");
-        String ngayLap = Validator.readString("Nhap ngay lap: ");
+        String ngayLap = Validator.readDate("Nhap ngay lap (yyyy-MM-dd): ");
 
         String maNV = Validator.readString("Nhap ma nhan vien lap hoa don: ");
         NhanVien nv = qlnv.layNhanVien(maNV);
@@ -536,9 +619,7 @@ public class Main {
         System.out.println("Tong tien: " + hd.tinhTongTien());
     }
 
-    // =========================================================
-    //                      PHIEU NHAP
-    // =========================================================
+    // ================= PHIEU NHAP =================
 
     private static void menuPhieuNhap() {
 
@@ -559,42 +640,34 @@ public class Main {
             luaChon = Validator.readInt("Nhap lua chon: ", 0, 8);
 
             switch (luaChon) {
-
                 case 1:
                     lapPhieuNhap();
                     break;
-
                 case 2:
                     qlpn.hienThiDanhSach();
                     break;
-
                 case 3: {
                     String maPN = Validator.readString("Nhap ma phieu nhap: ");
                     qlpn.timPhieuNhap(maPN);
                     break;
                 }
-
                 case 4: {
                     String maPN = Validator.readString("Nhap ma phieu nhap can xoa: ");
                     qlpn.xoaPhieuNhap(maPN);
                     break;
                 }
-
                 case 5: {
                     String maPN = Validator.readString("Nhap ma phieu nhap: ");
-                    String ngayMoi = Validator.readString("Nhap ngay nhap moi: ");
+                    String ngayMoi = Validator.readDate("Nhap ngay nhap moi (yyyy-MM-dd): ");
                     qlpn.suaNgayNhap(maPN, ngayMoi);
                     break;
                 }
-
                 case 6:
                     qlpn.thongKeTienNhap();
                     break;
-
                 case 7:
                     qlpn.thongKeTheoNhaCungCap();
                     break;
-
                 case 8:
                     qlpn.thongKeTheoNhanVien();
                     break;
@@ -608,7 +681,7 @@ public class Main {
         System.out.println("\n========== LAP PHIEU NHAP ==========");
 
         String maPN = Validator.readString("Nhap ma phieu nhap: ");
-        String ngayNhap = Validator.readString("Nhap ngay nhap: ");
+        String ngayNhap = Validator.readDate("Nhap ngay nhap (yyyy-MM-dd): ");
 
         String maNV = Validator.readString("Nhap ma nhan vien lap phieu: ");
         NhanVien nv = qlnv.layNhanVien(maNV);
@@ -622,16 +695,12 @@ public class Main {
 
         String maNCC = Validator.readString("Nhap ma nha cung cap: ");
         String tenNCC = Validator.readString("Nhap ten nha cung cap: ");
-        String soDienThoai = Validator.readString("Nhap so dien thoai: ");
+        String soDienThoai = Validator.readPhone("Nhap so dien thoai: ");
         String diaChi = Validator.readString("Nhap dia chi: ");
-        String email = Validator.readString("Nhap email: ");
+        String email = Validator.readEmail("Nhap email: ");
 
         NhaCungCap ncc = new NhaCungCap(
-                maNCC,
-                tenNCC,
-                soDienThoai,
-                diaChi,
-                email
+                maNCC, tenNCC, soDienThoai, diaChi, email
         );
 
         PhieuNhap pn = new PhieuNhap(maPN, ngayNhap, ncc, nv);
@@ -651,9 +720,13 @@ public class Main {
             }
 
             int soLuong = Validator.readInt("Nhap so luong nhap: ", 1, 100000);
+
             double donGiaNhap = Validator.readDouble("Nhap don gia nhap: ", 0);
 
-            ChiTietPhieuNhap ct = new ChiTietPhieuNhap(sp, soLuong, donGiaNhap);
+            ChiTietPhieuNhap ct = new ChiTietPhieuNhap(
+                    sp, soLuong, donGiaNhap
+            );
+
             pn.themChiTiet(ct);
         }
 
@@ -663,8 +736,6 @@ public class Main {
         }
 
         qlpn.themPhieuNhap(pn);
-
-        // Cap nhat ton kho theo phieu nhap vua lap
         qlpn.capNhatTonKhoTheoPhieuNhap(maPN);
 
         System.out.println("Lap phieu nhap thanh cong!");
