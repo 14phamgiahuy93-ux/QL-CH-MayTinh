@@ -152,7 +152,9 @@ public class QuanLyKhachHang implements IFileIO {
         try (BufferedReader reader = new BufferedReader(new FileReader(tenFile))) {
             String dong;
             soLuong = 0;
-
+            for (int i = 0; i < danhSach.length; i++) {
+                    danhSach[i] = null;
+                }
             while ((dong = reader.readLine()) != null) {
                 String[] thongTin = dong.split(";", -1);
                 if (thongTin.length != 6) {
