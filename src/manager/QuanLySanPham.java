@@ -16,8 +16,14 @@ public class QuanLySanPham implements IFileIO {
     private SanPham[] danhSach;
     private int soLuong;
 
-    // Constructor
+    // Constructor mac dinh
+    public QuanLySanPham() {
+        this(10);
+    }
+
+    // Constructor co kich thuoc
     public QuanLySanPham(int kichThoc) {
+
         if (kichThoc <= 0) {
             kichThoc = 10;
         }
@@ -31,6 +37,7 @@ public class QuanLySanPham implements IFileIO {
 
         if (sp == null || sp.getMaSP() == null
                 || sp.getMaSP().trim().isEmpty()) {
+
             System.out.println("San pham khong hop le!");
             return;
         }
@@ -40,8 +47,10 @@ public class QuanLySanPham implements IFileIO {
             return;
         }
 
-        if (soLuong == danhSach.length) {
-            danhSach = Arrays.copyOf(danhSach, danhSach.length * 2);
+        if (soLuong >= danhSach.length) {
+            danhSach = Arrays.copyOf(
+                danhSach, danhSach.length * 2
+            );
         }
 
         danhSach[soLuong++] = sp;
@@ -52,14 +61,14 @@ public class QuanLySanPham implements IFileIO {
     // 2. Them nhieu san pham
     public void themNhieuSanPham(SanPham[] ds, int k) {
 
-        if (ds == null || k <= 0) {
+        if (ds == null || k <= 0 || k > ds.length) {
             System.out.println("Du lieu khong hop le!");
             return;
         }
 
         int soThem = 0;
 
-        for (int i = 0; i < k && i < ds.length; i++) {
+        for (int i = 0; i < k; i++) {
 
             int truocDo = soLuong;
 
@@ -89,9 +98,11 @@ public class QuanLySanPham implements IFileIO {
         String hangSX = Validator.readString("Hang san xuat: ");
         double giaNhap = Validator.readDouble("Gia nhap: ", 0);
         double giaBan = Validator.readDouble("Gia ban: ", 0);
+
         int soLuongTon = Validator.readInt(
             "So luong ton: ", 0, 100000
         );
+
         int baoHanh = Validator.readInt(
             "Bao hanh (thang): ", 0, 120
         );
@@ -109,11 +120,20 @@ public class QuanLySanPham implements IFileIO {
     // 4. Xoa san pham theo ma
     public void xoaSanPham(String maSP) {
 
+        if (maSP == null || maSP.trim().isEmpty()) {
+            System.out.println("Ma san pham khong hop le!");
+            return;
+        }
+
         int index = -1;
 
         for (int i = 0; i < soLuong; i++) {
 
-            if (danhSach[i].getMaSP().equalsIgnoreCase(maSP)) {
+            if (danhSach[i] != null
+                    && danhSach[i].getMaSP() != null
+                    && danhSach[i].getMaSP()
+                    .equalsIgnoreCase(maSP.trim())) {
+
                 index = i;
                 break;
             }
@@ -157,11 +177,13 @@ public class QuanLySanPham implements IFileIO {
 
         for (int i = 0; i < soLuong; i++) {
 
-            if (danhSach[i].getTenSP() != null
-                    && danhSach[i].getTenSP().toLowerCase()
+            SanPham sp = danhSach[i];
+
+            if (sp != null && sp.getTenSP() != null
+                    && sp.getTenSP().toLowerCase()
                     .contains(tenSP.trim().toLowerCase())) {
 
-                danhSach[i].hienThiThongTin();
+                sp.hienThiThongTin();
                 timThay = true;
             }
         }
@@ -180,12 +202,17 @@ public class QuanLySanPham implements IFileIO {
         }
 
         tuKhoa = tuKhoa.trim();
+
         boolean timThay = false;
 
         // Tim chinh xac truoc
         for (int i = 0; i < soLuong; i++) {
 
             SanPham sp = danhSach[i];
+
+            if (sp == null) {
+                continue;
+            }
 
             String ma = sp.getMaSP() == null ? "" : sp.getMaSP();
             String ten = sp.getTenSP() == null ? "" : sp.getTenSP();
@@ -205,12 +232,16 @@ public class QuanLySanPham implements IFileIO {
             return;
         }
 
-        // Neu khong co ket qua chinh xac thi tim gan dung
+        // Tim gan dung
         String tuKhoaLower = tuKhoa.toLowerCase();
 
         for (int i = 0; i < soLuong; i++) {
 
             SanPham sp = danhSach[i];
+
+            if (sp == null) {
+                continue;
+            }
 
             String ma = sp.getMaSP() == null ? "" : sp.getMaSP();
             String ten = sp.getTenSP() == null ? "" : sp.getTenSP();
@@ -242,7 +273,10 @@ public class QuanLySanPham implements IFileIO {
         System.out.println("\n===== DANH SACH SAN PHAM =====");
 
         for (int i = 0; i < soLuong; i++) {
-            danhSach[i].hienThiThongTin();
+
+            if (danhSach[i] != null) {
+                danhSach[i].hienThiThongTin();
+            }
         }
     }
 
@@ -253,7 +287,8 @@ public class QuanLySanPham implements IFileIO {
 
             for (int j = i + 1; j < soLuong; j++) {
 
-                if (danhSach[i].tinhGiaBan()
+                if (danhSach[i] != null && danhSach[j] != null
+                        && danhSach[i].tinhGiaBan()
                         > danhSach[j].tinhGiaBan()) {
 
                     SanPham temp = danhSach[i];
@@ -273,7 +308,8 @@ public class QuanLySanPham implements IFileIO {
 
         for (int i = 0; i < soLuong; i++) {
 
-            if (danhSach[i].getSoLuongTon() < 5) {
+            if (danhSach[i] != null
+                    && danhSach[i].getSoLuongTon() < 5) {
 
                 System.out.println("Canh bao ton kho thap: "
                         + danhSach[i].getTenSP());
@@ -290,14 +326,16 @@ public class QuanLySanPham implements IFileIO {
     // 11. Lay san pham theo ma
     public SanPham laySanPham(String maSP) {
 
-        if (maSP == null) {
+        if (maSP == null || maSP.trim().isEmpty()) {
             return null;
         }
 
         for (int i = 0; i < soLuong; i++) {
 
-            if (danhSach[i].getMaSP() != null
-                    && danhSach[i].getMaSP().equalsIgnoreCase(maSP)) {
+            if (danhSach[i] != null
+                    && danhSach[i].getMaSP() != null
+                    && danhSach[i].getMaSP()
+                    .equalsIgnoreCase(maSP.trim())) {
 
                 return danhSach[i];
             }
@@ -320,6 +358,10 @@ public class QuanLySanPham implements IFileIO {
 
             SanPham sp = danhSach[i];
 
+            if (sp == null) {
+                continue;
+            }
+
             String hang = sp.getHangSX() == null
                     ? "Khong ro" : sp.getHangSX();
 
@@ -333,13 +375,8 @@ public class QuanLySanPham implements IFileIO {
                 thongKe.put(khoa, soLieu);
             }
 
-            // Dem so mat hang
             soLieu[0]++;
-
-            // Tong so luong ton
             soLieu[1] += sp.getSoLuongTon();
-
-            // Tong gia tri ton kho
             soLieu[2] += sp.tinhGiaTriTonKho();
         }
 
@@ -375,6 +412,11 @@ public class QuanLySanPham implements IFileIO {
             return false;
         }
 
+        if (sp.getSoLuongTon() > Integer.MAX_VALUE - soLuongNhap) {
+            System.out.println("So luong ton vuot gioi han!");
+            return false;
+        }
+
         sp.setSoLuongTon(
             sp.getSoLuongTon() + soLuongNhap
         );
@@ -396,7 +438,10 @@ public class QuanLySanPham implements IFileIO {
 
             SanPham sp = danhSach[i];
 
-            // Ghi thong tin may tinh
+            if (sp == null) {
+                continue;
+            }
+
             if (sp instanceof MayTinh) {
 
                 MayTinh mt = (MayTinh) sp;
@@ -416,7 +461,6 @@ public class QuanLySanPham implements IFileIO {
                   .append("\n");
             }
 
-            // Ghi thong tin chi tiet san pham
             else if (sp instanceof ChiTietSanPham) {
 
                 ChiTietSanPham ct = (ChiTietSanPham) sp;
@@ -452,7 +496,10 @@ public class QuanLySanPham implements IFileIO {
             return;
         }
 
-        // Xoa danh sach cu truoc khi doc
+        // Doc vao mang tam de tranh mat du lieu cu neu co loi
+        SanPham[] danhSachCu = danhSach;
+        int soLuongCu = soLuong;
+
         danhSach = new SanPham[10];
         soLuong = 0;
 
@@ -468,7 +515,6 @@ public class QuanLySanPham implements IFileIO {
 
             try {
 
-                // Doc loai MayTinh
                 if (data[0].equals("M") && data.length == 12) {
 
                     MayTinh mt = new MayTinh(
@@ -488,7 +534,6 @@ public class QuanLySanPham implements IFileIO {
                     themSanPham(mt);
                 }
 
-                // Doc loai ChiTietSanPham
                 else if (data[0].equals("C") && data.length == 11) {
 
                     ChiTietSanPham ct = new ChiTietSanPham(
@@ -518,6 +563,14 @@ public class QuanLySanPham implements IFileIO {
                     "Loi du lieu tai dong: " + dong
                 );
             }
+        }
+
+        // Neu khong doc duoc san pham nao thi giu danh sach cu
+        if (soLuong == 0) {
+            danhSach = danhSachCu;
+            soLuong = soLuongCu;
+            System.out.println("Khong doc duoc san pham, giu du lieu cu!");
+            return;
         }
 
         System.out.println("Doc file san pham hoan tat!");
