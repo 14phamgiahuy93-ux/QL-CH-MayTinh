@@ -1,6 +1,4 @@
-
 package manager;
-
 import entity.PhieuNhap;
 import entity.ChiTietPhieuNhap;
 import entity.NhaCungCap;
@@ -13,6 +11,7 @@ import utils.FileUtil;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,27 +23,58 @@ public class QuanLyPhieuNhap implements IFileIO {
     private QuanLySanPham qlSP;
     private QuanLyNhanVien qlNV;
 
-    // Luu ma phieu nhap da cap nhat ton kho
+    // Luu ma phieu da cap nhat ton kho
     private Set<String> phieuDaCapNhatTonKho;
 
-    // Constructor
+    // Constructor mac dinh
     public QuanLyPhieuNhap() {
         danhSach = new PhieuNhap[100];
         soLuong = 0;
         phieuDaCapNhatTonKho = new HashSet<>();
     }
 
+    // Constructor co tham so
     public QuanLyPhieuNhap(QuanLySanPham qlSP, QuanLyNhanVien qlNV) {
         this();
         this.qlSP = qlSP;
         this.qlNV = qlNV;
     }
 
-    // 1. Them phieu nhap
+    // Chuan hoa ma phieu
+    private String chuanHoaMa(String maPN) {
+        if (maPN == null) {
+            return "";
+        }
+        return maPN.trim().toLowerCase(Locale.ROOT);
+    }
+
+    // 1. Lay phieu nhap theo ma
+    private PhieuNhap layPhieuNhapNoiBo(String maPN) {
+
+        if (maPN == null || maPN.trim().isEmpty()) {
+            return null;
+        }
+
+        for (int i = 0; i < soLuong; i++) {
+
+            if (danhSach[i] != null
+                    && danhSach[i].getMaPN() != null
+                    && danhSach[i].getMaPN().trim()
+                    .equalsIgnoreCase(maPN.trim())) {
+
+                return danhSach[i];
+            }
+        }
+
+        return null;
+    }
+
+    // 2. Them mot phieu nhap
     public void themPhieuNhap(PhieuNhap pn) {
 
         if (pn == null || pn.getMaPN() == null
                 || pn.getMaPN().trim().isEmpty()) {
+
             System.out.println("Phieu nhap khong hop le!");
             return;
         }
@@ -55,7 +85,9 @@ public class QuanLyPhieuNhap implements IFileIO {
         }
 
         if (soLuong >= danhSach.length) {
-            danhSach = Arrays.copyOf(danhSach, danhSach.length * 2);
+            danhSach = Arrays.copyOf(
+                danhSach, danhSach.length * 2
+            );
         }
 
         danhSach[soLuong++] = pn;
@@ -63,31 +95,20 @@ public class QuanLyPhieuNhap implements IFileIO {
         System.out.println("Them phieu nhap thanh cong!");
     }
 
-    // 2. Them nhieu phieu nhap
+    // 3. Them nhieu phieu nhap
     public void themNhieuPhieuNhap(PhieuNhap[] ds, int k) {
 
-        if (ds == null || k <= 0) {
-            System.out.println("Du lieu khong hop le!");
+        if (ds == null || k <= 0 || k > ds.length) {
+            System.out.println("Danh sach hoac so luong khong hop le!");
             return;
         }
 
-        int soThem = 0;
-
-        for (int i = 0; i < k && i < ds.length; i++) {
-
-            int truocDo = soLuong;
-
+        for (int i = 0; i < k; i++) {
             themPhieuNhap(ds[i]);
-
-            if (soLuong > truocDo) {
-                soThem++;
-            }
         }
-
-        System.out.println("Da them " + soThem + " phieu nhap!");
     }
 
-    // 3. Xoa phieu nhap theo ma
+    // 4. Xoa phieu nhap
     public void xoaPhieuNhap(String maPN) {
 
         PhieuNhap pn = layPhieuNhapNoiBo(maPN);
@@ -97,51 +118,48 @@ public class QuanLyPhieuNhap implements IFileIO {
             return;
         }
 
-        // Neu da cap nhat ton kho thi phai hoan tac truoc
-        if (phieuDaCapNhatTonKho.contains(maPN.toLowerCase())) {
+        String maChuanHoa = chuanHoaMa(pn.getMaPN());
+
+        // Neu da cap nhat ton kho thi hoan tac truoc khi xoa
+        if (phieuDaCapNhatTonKho.contains(maChuanHoa)) {
 
             if (!hoanTacTonKho(pn)) {
-                System.out.println(
-                    "Khong the xoa phieu nhap vi khong the hoan tac ton kho!"
-                );
+                System.out.println("Khong the xoa vi khong the hoan tac ton kho!");
                 return;
             }
 
-            phieuDaCapNhatTonKho.remove(maPN.toLowerCase());
+            phieuDaCapNhatTonKho.remove(maChuanHoa);
         }
-
-        int index = -1;
 
         for (int i = 0; i < soLuong; i++) {
+
             if (danhSach[i] == pn) {
-                index = i;
-                break;
+
+                for (int j = i; j < soLuong - 1; j++) {
+                    danhSach[j] = danhSach[j + 1];
+                }
+
+                danhSach[--soLuong] = null;
+
+                System.out.println("Xoa phieu nhap thanh cong!");
+                return;
             }
         }
-
-        for (int i = index; i < soLuong - 1; i++) {
-            danhSach[i] = danhSach[i + 1];
-        }
-
-        danhSach[--soLuong] = null;
-
-        System.out.println("Xoa phieu nhap thanh cong!");
     }
 
-    // 4. Tim phieu nhap theo ma
+    // 5. Tim phieu nhap
     public void timPhieuNhap(String maPN) {
 
         PhieuNhap pn = layPhieuNhapNoiBo(maPN);
 
-        if (pn != null) {
-            System.out.println("Da tim thay phieu nhap:");
-            pn.hienThi();
-        } else {
+        if (pn == null) {
             System.out.println("Khong tim thay phieu nhap!");
+        } else {
+            pn.hienThi();
         }
     }
 
-    // 5. Tim phieu nhap theo nhieu tieu chi
+    // 6. Tim kiem nhieu tieu chi
     public void timPhieuNhapNhieuTieuChi(String tuKhoa) {
 
         if (tuKhoa == null || tuKhoa.trim().isEmpty()) {
@@ -149,7 +167,8 @@ public class QuanLyPhieuNhap implements IFileIO {
             return;
         }
 
-        tuKhoa = tuKhoa.trim();
+        String tuKhoaChuan = tuKhoa.trim().toLowerCase(Locale.ROOT);
+
         boolean timThay = false;
 
         // Tim chinh xac truoc
@@ -157,58 +176,65 @@ public class QuanLyPhieuNhap implements IFileIO {
 
             PhieuNhap pn = danhSach[i];
 
-            String ma = pn.getMaPN() == null ? "" : pn.getMaPN();
-            String ngay = pn.getNgayNhap() == null ? "" : pn.getNgayNhap();
+            if (pn == null) {
+                continue;
+            }
 
-            String tenNCC = pn.getNhaCungCap() != null
+            boolean khopMa = pn.getMaPN() != null
+                    && pn.getMaPN().equalsIgnoreCase(tuKhoa.trim());
+
+            boolean khopNgay = pn.getNgayNhap() != null
+                    && pn.getNgayNhap().equalsIgnoreCase(tuKhoa.trim());
+
+            boolean khopNCC = pn.getNhaCungCap() != null
                     && pn.getNhaCungCap().getTenNCC() != null
-                    ? pn.getNhaCungCap().getTenNCC() : "";
+                    && pn.getNhaCungCap().getTenNCC()
+                    .equalsIgnoreCase(tuKhoa.trim());
 
-            String tenNV = pn.getNhanVien() != null
+            boolean khopNV = pn.getNhanVien() != null
                     && pn.getNhanVien().getHoTen() != null
-                    ? pn.getNhanVien().getHoTen() : "";
+                    && pn.getNhanVien().getHoTen()
+                    .equalsIgnoreCase(tuKhoa.trim());
 
-            if (ma.equalsIgnoreCase(tuKhoa)
-                    || ngay.equalsIgnoreCase(tuKhoa)
-                    || tenNCC.equalsIgnoreCase(tuKhoa)
-                    || tenNV.equalsIgnoreCase(tuKhoa)) {
-
-                System.out.println("Tim thay chinh xac:");
+            if (khopMa || khopNgay || khopNCC || khopNV) {
                 pn.hienThi();
                 timThay = true;
             }
         }
 
-        if (timThay) {
-            return;
-        }
-
         // Neu khong co ket qua chinh xac thi tim gan dung
-        String tuKhoaLower = tuKhoa.toLowerCase();
+        if (!timThay) {
 
-        for (int i = 0; i < soLuong; i++) {
+            for (int i = 0; i < soLuong; i++) {
 
-            PhieuNhap pn = danhSach[i];
+                PhieuNhap pn = danhSach[i];
 
-            String ma = pn.getMaPN() == null ? "" : pn.getMaPN();
-            String ngay = pn.getNgayNhap() == null ? "" : pn.getNgayNhap();
+                if (pn == null) {
+                    continue;
+                }
 
-            String tenNCC = pn.getNhaCungCap() != null
-                    && pn.getNhaCungCap().getTenNCC() != null
-                    ? pn.getNhaCungCap().getTenNCC() : "";
+                boolean khopMa = pn.getMaPN() != null
+                        && pn.getMaPN().toLowerCase(Locale.ROOT)
+                        .contains(tuKhoaChuan);
 
-            String tenNV = pn.getNhanVien() != null
-                    && pn.getNhanVien().getHoTen() != null
-                    ? pn.getNhanVien().getHoTen() : "";
+                boolean khopNgay = pn.getNgayNhap() != null
+                        && pn.getNgayNhap().toLowerCase(Locale.ROOT)
+                        .contains(tuKhoaChuan);
 
-            if (ma.toLowerCase().contains(tuKhoaLower)
-                    || ngay.toLowerCase().contains(tuKhoaLower)
-                    || tenNCC.toLowerCase().contains(tuKhoaLower)
-                    || tenNV.toLowerCase().contains(tuKhoaLower)) {
+                boolean khopNCC = pn.getNhaCungCap() != null
+                        && pn.getNhaCungCap().getTenNCC() != null
+                        && pn.getNhaCungCap().getTenNCC()
+                        .toLowerCase(Locale.ROOT).contains(tuKhoaChuan);
 
-                System.out.println("Tim thay gan dung:");
-                pn.hienThi();
-                timThay = true;
+                boolean khopNV = pn.getNhanVien() != null
+                        && pn.getNhanVien().getHoTen() != null
+                        && pn.getNhanVien().getHoTen()
+                        .toLowerCase(Locale.ROOT).contains(tuKhoaChuan);
+
+                if (khopMa || khopNgay || khopNCC || khopNV) {
+                    pn.hienThi();
+                    timThay = true;
+                }
             }
         }
 
@@ -217,196 +243,175 @@ public class QuanLyPhieuNhap implements IFileIO {
         }
     }
 
-    // 6. Sua ngay nhap
-    public boolean suaNgayNhap(String maPN, String ngayNhapMoi) {
+    // 7. Sua ngay nhap
+    public void suaNgayNhap(String maPN, String ngayNhapMoi) {
 
         if (ngayNhapMoi == null || ngayNhapMoi.trim().isEmpty()) {
-            System.out.println("Ngay nhap moi khong hop le!");
-            return false;
+            System.out.println("Ngay nhap khong hop le!");
+            return;
         }
 
         PhieuNhap pn = layPhieuNhapNoiBo(maPN);
 
         if (pn == null) {
             System.out.println("Khong tim thay phieu nhap!");
-            return false;
+            return;
         }
 
         pn.setNgayNhap(ngayNhapMoi.trim());
 
         System.out.println("Cap nhat ngay nhap thanh cong!");
-        return true;
     }
 
-    // 7. Hien thi danh sach phieu nhap
+    // 8. Hien thi danh sach
     public void hienThiDanhSach() {
 
         if (soLuong == 0) {
-            System.out.println("Danh sach phieu nhap trong!");
+            System.out.println("Danh sach phieu nhap rong!");
             return;
         }
 
-        System.out.println("\n===== DANH SACH PHIEU NHAP =====");
-
         for (int i = 0; i < soLuong; i++) {
-            danhSach[i].hienThi();
+
+            if (danhSach[i] != null) {
+                danhSach[i].hienThi();
+            }
         }
     }
 
-    // 8. Thong ke tong tien nhap
+    // 9. Thong ke tong tien nhap
     public void thongKeTienNhap() {
 
-        double tongChiPhi = 0;
+        double tongTien = 0;
 
         for (int i = 0; i < soLuong; i++) {
-            tongChiPhi += danhSach[i].tinhTongTienNhap();
+
+            if (danhSach[i] != null) {
+                tongTien += danhSach[i].tinhTongTienNhap();
+            }
         }
 
-        System.out.println("\n===== THONG KE NHAP HANG =====");
-        System.out.println("Tong so phieu nhap: " + soLuong);
-
-        System.out.printf(
-            "Tong chi phi nhap hang: %.2f VND%n",
-            tongChiPhi
-        );
+        System.out.printf("Tong tien nhap: %.2f VND%n", tongTien);
     }
 
-    // 9. Thong ke theo nha cung cap
+    // 10. Thong ke theo nha cung cap
     public void thongKeTheoNhaCungCap() {
 
-        if (soLuong == 0) {
-            System.out.println("Danh sach phieu nhap rong!");
-            return;
-        }
-
-        Map<String, double[]> thongKe = new HashMap<>();
+        Map<String, Double> thongKe = new HashMap<>();
 
         for (int i = 0; i < soLuong; i++) {
 
             PhieuNhap pn = danhSach[i];
 
-            if (pn.getNhaCungCap() == null) {
+            if (pn == null || pn.getNhaCungCap() == null) {
                 continue;
             }
 
-            String khoa = pn.getNhaCungCap().getMaNCC()
-                    + " - "
-                    + pn.getNhaCungCap().getTenNCC();
+            String tenNCC = pn.getNhaCungCap().getTenNCC();
 
-            double[] soLieu = thongKe.get(khoa);
-
-            if (soLieu == null) {
-                soLieu = new double[2];
-                thongKe.put(khoa, soLieu);
+            if (tenNCC == null) {
+                continue;
             }
 
-            soLieu[0]++;
-            soLieu[1] += pn.tinhTongTienNhap();
+            double tien = pn.tinhTongTienNhap();
+
+            thongKe.put(
+                tenNCC,
+                thongKe.getOrDefault(tenNCC, 0.0) + tien
+            );
         }
 
-        System.out.println("\n===== THONG KE THEO NHA CUNG CAP =====");
+        System.out.println("THONG KE THEO NHA CUNG CAP:");
 
-        for (Map.Entry<String, double[]> entry : thongKe.entrySet()) {
-
-            double[] soLieu = entry.getValue();
-
-            System.out.println("\nNha cung cap: " + entry.getKey());
-            System.out.println("So phieu nhap: " + (int) soLieu[0]);
+        for (Map.Entry<String, Double> entry : thongKe.entrySet()) {
 
             System.out.printf(
-                "Tong tien nhap: %.2f VND%n",
-                soLieu[1]
+                "%s: %.2f VND%n",
+                entry.getKey(),
+                entry.getValue()
             );
         }
     }
 
-    // 10. Thong ke theo nhan vien
+    // 11. Thong ke theo nhan vien
     public void thongKeTheoNhanVien() {
 
-        if (soLuong == 0) {
-            System.out.println("Danh sach phieu nhap rong!");
-            return;
-        }
-
-        Map<String, double[]> thongKe = new HashMap<>();
+        Map<String, Double> thongKe = new HashMap<>();
 
         for (int i = 0; i < soLuong; i++) {
 
             PhieuNhap pn = danhSach[i];
 
-            if (pn.getNhanVien() == null) {
+            if (pn == null || pn.getNhanVien() == null) {
                 continue;
             }
 
-            String khoa = pn.getNhanVien().getMaNV()
-                    + " - "
-                    + pn.getNhanVien().getHoTen();
+            String tenNV = pn.getNhanVien().getHoTen();
 
-            double[] soLieu = thongKe.get(khoa);
-
-            if (soLieu == null) {
-                soLieu = new double[2];
-                thongKe.put(khoa, soLieu);
+            if (tenNV == null) {
+                continue;
             }
 
-            soLieu[0]++;
-            soLieu[1] += pn.tinhTongTienNhap();
+            double tien = pn.tinhTongTienNhap();
+
+            thongKe.put(
+                tenNV,
+                thongKe.getOrDefault(tenNV, 0.0) + tien
+            );
         }
 
-        System.out.println("\n===== THONG KE THEO NHAN VIEN =====");
+        System.out.println("THONG KE THEO NHAN VIEN:");
 
-        for (Map.Entry<String, double[]> entry : thongKe.entrySet()) {
-
-            double[] soLieu = entry.getValue();
-
-            System.out.println("\nNhan vien: " + entry.getKey());
-            System.out.println("So phieu nhap: " + (int) soLieu[0]);
+        for (Map.Entry<String, Double> entry : thongKe.entrySet()) {
 
             System.out.printf(
-                "Tong tien nhap: %.2f VND%n",
-                soLieu[1]
+                "%s: %.2f VND%n",
+                entry.getKey(),
+                entry.getValue()
             );
         }
     }
 
-    // 11. Cap nhat ton kho theo phieu nhap
-    public boolean capNhatTonKhoTheoPhieuNhap(String maPN) {
+    // 12. Cap nhat ton kho theo phieu nhap
+    public void capNhatTonKhoTheoPhieuNhap(String maPN) {
 
         if (qlSP == null) {
-            System.out.println("Chua khoi tao QuanLySanPham!");
-            return false;
+            System.out.println("Chua khoi tao quan ly san pham!");
+            return;
         }
 
         PhieuNhap pn = layPhieuNhapNoiBo(maPN);
 
         if (pn == null) {
             System.out.println("Khong tim thay phieu nhap!");
-            return false;
+            return;
         }
 
-        String khoa = maPN.toLowerCase();
+        String maChuanHoa = chuanHoaMa(pn.getMaPN());
 
-        // Kiem tra phieu nhap da cap nhat chua
-        if (phieuDaCapNhatTonKho.contains(khoa)) {
-            System.out.println("Phieu nhap nay da cap nhat ton kho!");
-            return false;
+        if (phieuDaCapNhatTonKho.contains(maChuanHoa)) {
+            System.out.println("Phieu nhap nay da duoc cap nhat ton kho!");
+            return;
         }
 
-        if (pn.getSoLuongChiTiet() <= 0) {
-            System.out.println("Phieu nhap chua co chi tiet san pham!");
-            return false;
+        ChiTietPhieuNhap[] dsCT = pn.getDanhSachChiTiet();
+        int n = pn.getSoLuongChiTiet();
+
+        if (dsCT == null || n <= 0) {
+            System.out.println("Phieu nhap chua co chi tiet!");
+            return;
         }
 
-        // Kiem tra tat ca chi tiet truoc khi cap nhat
-        for (int i = 0; i < pn.getSoLuongChiTiet(); i++) {
+        // Kiem tra toan bo chi tiet truoc khi cap nhat
+        for (int i = 0; i < n; i++) {
 
-            ChiTietPhieuNhap ct = pn.getDanhSachChiTiet()[i];
+            ChiTietPhieuNhap ct = dsCT[i];
 
             if (ct == null || ct.getSanPham() == null
                     || ct.getSoLuong() <= 0) {
 
                 System.out.println("Chi tiet phieu nhap khong hop le!");
-                return false;
+                return;
             }
 
             SanPham sp = qlSP.laySanPham(
@@ -414,15 +419,20 @@ public class QuanLyPhieuNhap implements IFileIO {
             );
 
             if (sp == null) {
-                System.out.println("San pham khong ton tai!");
-                return false;
+                System.out.println("San pham khong ton tai trong kho!");
+                return;
+            }
+
+            if (sp.getSoLuongTon() > Integer.MAX_VALUE - ct.getSoLuong()) {
+                System.out.println("So luong ton vuot gioi han!");
+                return;
             }
         }
 
-        // Tien hanh cap nhat ton kho
-        for (int i = 0; i < pn.getSoLuongChiTiet(); i++) {
+        // Cap nhat ton kho
+        for (int i = 0; i < n; i++) {
 
-            ChiTietPhieuNhap ct = pn.getDanhSachChiTiet()[i];
+            ChiTietPhieuNhap ct = dsCT[i];
 
             SanPham sp = qlSP.laySanPham(
                 ct.getSanPham().getMaSP()
@@ -433,55 +443,75 @@ public class QuanLyPhieuNhap implements IFileIO {
             );
         }
 
-        phieuDaCapNhatTonKho.add(khoa);
+        phieuDaCapNhatTonKho.add(maChuanHoa);
 
         System.out.println("Cap nhat ton kho thanh cong!");
-        return true;
     }
 
-    // 12. Hoan tac ton kho khi xoa phieu nhap
+    // 13. Hoan tac ton kho
     private boolean hoanTacTonKho(PhieuNhap pn) {
 
-        if (qlSP == null) {
+        if (pn == null || qlSP == null) {
             return false;
         }
 
-        // Kiem tra truoc khi hoan tac
-        for (int i = 0; i < pn.getSoLuongChiTiet(); i++) {
+        ChiTietPhieuNhap[] dsCT = pn.getDanhSachChiTiet();
+        int n = pn.getSoLuongChiTiet();
 
-            ChiTietPhieuNhap ct = pn.getDanhSachChiTiet()[i];
+        if (dsCT == null) {
+            return false;
+        }
 
-            if (ct == null || ct.getSanPham() == null) {
+        // Gom tong so luong theo ma san pham
+        Map<String, Integer> tongSoLuong = new HashMap<>();
+
+        for (int i = 0; i < n; i++) {
+
+            ChiTietPhieuNhap ct = dsCT[i];
+
+            if (ct == null || ct.getSanPham() == null
+                    || ct.getSanPham().getMaSP() == null
+                    || ct.getSoLuong() <= 0) {
+
                 return false;
             }
 
-            SanPham sp = qlSP.laySanPham(
-                ct.getSanPham().getMaSP()
-            );
+            String maSP = ct.getSanPham().getMaSP();
 
-            if (sp == null || sp.getSoLuongTon() < ct.getSoLuong()) {
+            int cu = tongSoLuong.getOrDefault(maSP, 0);
+
+            if (cu > Integer.MAX_VALUE - ct.getSoLuong()) {
+                return false;
+            }
+
+            tongSoLuong.put(maSP, cu + ct.getSoLuong());
+        }
+
+        // Kiem tra ton kho truoc khi tru
+        for (Map.Entry<String, Integer> entry : tongSoLuong.entrySet()) {
+
+            SanPham sp = qlSP.laySanPham(entry.getKey());
+
+            if (sp == null || sp.getSoLuongTon() < entry.getValue()) {
+                System.out.println("Khong du ton kho de hoan tac!");
                 return false;
             }
         }
 
-        // Tru lai so luong da nhap
-        for (int i = 0; i < pn.getSoLuongChiTiet(); i++) {
+        // Tru ton kho
+        for (Map.Entry<String, Integer> entry : tongSoLuong.entrySet()) {
 
-            ChiTietPhieuNhap ct = pn.getDanhSachChiTiet()[i];
-
-            SanPham sp = qlSP.laySanPham(
-                ct.getSanPham().getMaSP()
-            );
+            SanPham sp = qlSP.laySanPham(entry.getKey());
 
             sp.setSoLuongTon(
-                sp.getSoLuongTon() - ct.getSoLuong()
+                sp.getSoLuongTon() - entry.getValue()
             );
         }
 
         return true;
     }
 
-    // 13. Ghi danh sach phieu nhap vao file
+    // 14. Ghi file
     @Override
     public void ghiFile(String tenFile) {
 
@@ -491,193 +521,159 @@ public class QuanLyPhieuNhap implements IFileIO {
 
             PhieuNhap pn = danhSach[i];
 
-            NhaCungCap ncc = pn.getNhaCungCap();
-            NhanVien nv = pn.getNhanVien();
-
-            if (ncc == null || nv == null) {
-                System.out.println("Bo qua phieu nhap khong hop le!");
+            if (pn == null || pn.getMaPN() == null) {
                 continue;
             }
 
-            String khoa = pn.getMaPN().toLowerCase();
+            String maPN = pn.getMaPN();
+            String ngayNhap = pn.getNgayNhap() == null
+                    ? "" : pn.getNgayNhap();
 
-            boolean daCapNhat = phieuDaCapNhatTonKho.contains(khoa);
+            String maNCC = pn.getNhaCungCap() == null
+                    ? "" : pn.getNhaCungCap().getMaNCC();
 
-            sb.append("P;")
-              .append(pn.getMaPN()).append(";")
-              .append(pn.getNgayNhap()).append(";")
-              .append(ncc.getMaNCC()).append(";")
-              .append(ncc.getTenNCC()).append(";")
-              .append(ncc.getSoDienThoai()).append(";")
-              .append(ncc.getDiaChi()).append(";")
-              .append(ncc.getEmail()).append(";")
-              .append(nv.getMaNV()).append(";")
-              .append(daCapNhat).append("\n");
+            String maNV = pn.getNhanVien() == null
+                    ? "" : pn.getNhanVien().getMaNV();
+
+            boolean daCapNhat = phieuDaCapNhatTonKho.contains(
+                chuanHoaMa(maPN)
+            );
+
+            sb.append("P|")
+              .append(maPN).append("|")
+              .append(ngayNhap).append("|")
+              .append(maNCC).append("|")
+              .append(maNV).append("|")
+              .append(daCapNhat)
+              .append("\n");
+
+            ChiTietPhieuNhap[] dsCT = pn.getDanhSachChiTiet();
 
             for (int j = 0; j < pn.getSoLuongChiTiet(); j++) {
 
-                ChiTietPhieuNhap ct = pn.getDanhSachChiTiet()[j];
-
-                if (ct == null || ct.getSanPham() == null) {
+                if (dsCT == null || dsCT[j] == null
+                        || dsCT[j].getSanPham() == null) {
                     continue;
                 }
 
-                sb.append("C;")
-                  .append(pn.getMaPN()).append(";")
-                  .append(ct.getSanPham().getMaSP()).append(";")
-                  .append(ct.getSoLuong()).append(";")
-                  .append(ct.getDonGiaNhap()).append("\n");
+                ChiTietPhieuNhap ct = dsCT[j];
+
+                sb.append("C|")
+                  .append(maPN).append("|")
+                  .append(ct.getSanPham().getMaSP()).append("|")
+                  .append(ct.getSoLuong()).append("|")
+                  .append(ct.getDonGiaNhap())
+                  .append("\n");
             }
         }
 
         FileUtil.ghiChuoi(tenFile, sb.toString());
-
-        System.out.println("Ghi file phieu nhap thanh cong!");
     }
 
-    // 14. Doc danh sach phieu nhap tu file
+    // 15. Doc file
     @Override
     public void docFile(String tenFile) {
 
         if (qlSP == null || qlNV == null) {
-            System.out.println(
-                "Chua khoi tao QuanLySanPham hoac QuanLyNhanVien!"
-            );
+            System.out.println("Can khoi tao quan ly san pham va nhan vien truoc!");
             return;
         }
-
-        danhSach = new PhieuNhap[100];
-        soLuong = 0;
-        phieuDaCapNhatTonKho.clear();
 
         String noiDung = FileUtil.docChuoi(tenFile);
 
         if (noiDung == null || noiDung.trim().isEmpty()) {
-            System.out.println("File trong hoac khong doc duoc!");
+            System.out.println("File rong hoac khong doc duoc!");
             return;
         }
 
-        String[] cacDong = noiDung.split("\\R");
+        // Chi xoa du lieu cu sau khi doc duoc noi dung
+        danhSach = new PhieuNhap[100];
+        soLuong = 0;
+        phieuDaCapNhatTonKho.clear();
 
-        for (String line : cacDong) {
+        String[] dong = noiDung.split("\\r?\\n");
 
-            if (line.trim().isEmpty()) {
-                continue;
-            }
+        for (String line : dong) {
 
-            String[] data = line.split(";", -1);
+            String[] p = line.split("\\|", -1);
 
             try {
 
-                // Doc thong tin phieu nhap
-                if (data[0].equals("P")
-                        && (data.length == 9 || data.length == 10)) {
+                if (p[0].equals("P") && p.length >= 5) {
 
-                    NhaCungCap ncc = new NhaCungCap(
-                        data[3],
-                        data[4],
-                        data[5],
-                        data[6],
-                        data[7]
-                    );
+                    String maPN = p[1];
+                    String ngayNhap = p[2];
+                    String maNCC = p[3];
+                    String maNV = p[4];
 
-                    NhanVien nv = qlNV.layNhanVien(data[8]);
+                    NhaCungCap ncc = null;
 
-                    if (nv == null) {
-                        System.out.println(
-                            "Khong tim thay nhan vien: " + data[8]
-                        );
-                        continue;
+                    if (!maNCC.isEmpty()) {
+                        ncc = new NhaCungCap();
+                        ncc.setMaNCC(maNCC);
                     }
 
-                    PhieuNhap pn = new PhieuNhap(
-                        data[1],
-                        data[2],
-                        ncc,
-                        nv
-                    );
+                    NhanVien nv = qlNV.layNhanVien(maNV);
 
-                    int truocDo = soLuong;
+                    PhieuNhap pn = new PhieuNhap(
+                        maPN, ngayNhap, ncc, nv
+                    );
 
                     themPhieuNhap(pn);
 
-                    if (soLuong > truocDo && data.length == 10
-                            && Boolean.parseBoolean(data[9])) {
+                    // Ho tro ca dinh dang cu 5 truong va moi 6 truong
+                    if (p.length >= 6
+                            && Boolean.parseBoolean(p[5])
+                            && pn.getMaPN() != null) {
 
                         phieuDaCapNhatTonKho.add(
-                            data[1].toLowerCase()
+                            chuanHoaMa(pn.getMaPN())
                         );
                     }
-                }
 
-                // Doc chi tiet phieu nhap
-                else if (data.length == 5 && data[0].equals("C")) {
+                } else if (p[0].equals("C") && p.length >= 5) {
 
-                    String maPN = data[1];
-                    String maSP = data[2];
+                    String maPN = p[1];
+                    String maSP = p[2];
 
-                    int soLuongNhap = Integer.parseInt(data[3]);
-                    double donGiaNhap = Double.parseDouble(data[4]);
+                    int soLuongNhap = Integer.parseInt(p[3]);
+                    double donGiaNhap = Double.parseDouble(p[4]);
 
                     PhieuNhap pn = layPhieuNhapNoiBo(maPN);
                     SanPham sp = qlSP.laySanPham(maSP);
 
-                    if (pn == null || sp == null) {
-                        System.out.println(
-                            "Khong tim thay phieu nhap hoac san pham!"
+                    if (pn != null && sp != null) {
+
+                        ChiTietPhieuNhap ct = new ChiTietPhieuNhap(
+                            sp, soLuongNhap, donGiaNhap
                         );
-                        continue;
+
+                        pn.themChiTiet(ct);
                     }
-
-                    ChiTietPhieuNhap ct = new ChiTietPhieuNhap(
-                        sp,
-                        soLuongNhap,
-                        donGiaNhap
-                    );
-
-                    pn.themChiTiet(ct);
                 }
 
-                else {
-                    System.out.println(
-                        "Dong du lieu khong hop le: " + line
-                    );
-                }
-
-            } catch (NumberFormatException e) {
-                System.out.println(
-                    "Du lieu so khong hop le: " + line
-                );
+            } catch (Exception e) {
+                System.out.println("Loi doc dong: " + line);
             }
         }
 
         System.out.println("Doc file phieu nhap hoan tat!");
     }
 
-    // 15. Lay phieu nhap theo ma
-    private PhieuNhap layPhieuNhapNoiBo(String maPN) {
-
-        if (maPN == null) {
-            return null;
-        }
-
-        for (int i = 0; i < soLuong; i++) {
-
-            if (danhSach[i].getMaPN() != null
-                    && danhSach[i].getMaPN().equalsIgnoreCase(maPN)) {
-                return danhSach[i];
-            }
-        }
-
-        return null;
-    }
-
-    // 16. Getters
+    // Getters va Setters
     public PhieuNhap[] getDanhSach() {
         return danhSach;
     }
 
     public int getSoLuong() {
         return soLuong;
+    }
+
+    public void setQlSP(QuanLySanPham qlSP) {
+        this.qlSP = qlSP;
+    }
+
+    public void setQlNV(QuanLyNhanVien qlNV) {
+        this.qlNV = qlNV;
     }
 }
