@@ -106,7 +106,7 @@ public class QuanLyPhieuNhap implements IFileIO {
     public int getSoLuong() {
         return soLuong;
     }
-    @Override
+@Override
 public void docFile(String tenFile) {
 
     if (qlSP == null || qlNV == null) {
@@ -196,6 +196,39 @@ public void docFile(String tenFile) {
     }
 
     System.out.println("Đọc file phiếu nhập thành công!");
+}
+@Override
+public void ghiFile(String tenFile) {
+    StringBuilder sb = new StringBuilder();
+
+    for (int i = 0; i < soLuong; i++) {
+        PhieuNhap pn = danhSach[i];
+        NhaCungCap ncc = pn.getNhaCungCap();
+        NhanVien nv = pn.getNhanVien();
+
+        sb.append("P;")
+          .append(pn.getMaPN()).append(";")
+          .append(pn.getNgayNhap()).append(";")
+          .append(ncc.getMaNCC()).append(";")
+          .append(ncc.getTenNCC()).append(";")
+          .append(ncc.getSoDienThoai()).append(";")
+          .append(ncc.getDiaChi()).append(";")
+          .append(ncc.getEmail()).append(";")
+          .append(nv.getMaNV()).append("\n");
+
+        for (int j = 0; j < pn.getSoLuongChiTiet(); j++) {
+            ChiTietPhieuNhap ct = pn.getDanhSachChiTiet()[j];
+
+            sb.append("C;")
+              .append(pn.getMaPN()).append(";")
+              .append(ct.getSanPham().getMaSP()).append(";")
+              .append(ct.getSoLuong()).append(";")
+              .append(ct.getDonGiaNhap()).append("\n");
+        }
+    }
+
+    FileUtil.ghiChuoi(tenFile, sb.toString());
+    System.out.println("Ghi file phiếu nhập thành công!");
 }
     private PhieuNhap layPhieuNhapNoiBo(String maPN) {
     for (int i = 0; i < soLuong; i++) {
