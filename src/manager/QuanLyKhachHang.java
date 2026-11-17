@@ -214,4 +214,83 @@ public class QuanLyKhachHang implements IFileIO {
             themKhachHang(kh);
         }
     }
+    public void timKhachHangNhieuTieuChi(String tuKhoa) {
+    boolean timThay = false;
+
+    // Tim chinh xac truoc
+    for (int i = 0; i < soLuong; i++) {
+        KhachHang kh = danhSach[i];
+
+        if (kh.getMaKH().equalsIgnoreCase(tuKhoa)
+                || kh.getHoTen().equalsIgnoreCase(tuKhoa)
+                || kh.getSoDienThoai().equalsIgnoreCase(tuKhoa)
+                || kh.getEmail().equalsIgnoreCase(tuKhoa)
+                || kh.getDiaChi().equalsIgnoreCase(tuKhoa)) {
+
+            kh.hienThiThongTin();
+            timThay = true;
+        }
+    }
+
+    // Neu khong co ket qua chinh xac thi tim gan dung
+    if (!timThay) {
+        for (int i = 0; i < soLuong; i++) {
+            KhachHang kh = danhSach[i];
+
+            if (kh.getMaKH().toLowerCase().contains(tuKhoa.toLowerCase())
+                    || kh.getHoTen().toLowerCase().contains(tuKhoa.toLowerCase())
+                    || kh.getSoDienThoai().contains(tuKhoa)
+                    || kh.getEmail().toLowerCase().contains(tuKhoa.toLowerCase())
+                    || kh.getDiaChi().toLowerCase().contains(tuKhoa.toLowerCase())) {
+
+                kh.hienThiThongTin();
+                timThay = true;
+            }
+        }
+    }
+
+    if (!timThay) {
+        System.out.println("Khong tim thay khach hang!");
+    }
+}
+    public void thongKeTheoDiaChi() {
+    for (int i = 0; i < soLuong; i++) {
+        String diaChi = danhSach[i].getDiaChi();
+
+        boolean daThongKe = false;
+
+        for (int j = 0; j < i; j++) {
+            if (danhSach[j].getDiaChi().equalsIgnoreCase(diaChi)) {
+                daThongKe = true;
+                break;
+            }
+        }
+
+        if (daThongKe) {
+            continue;
+        }
+
+        int dem = 0;
+
+        for (int j = 0; j < soLuong; j++) {
+            if (danhSach[j].getDiaChi().equalsIgnoreCase(diaChi)) {
+                dem++;
+            }
+        }
+
+        System.out.println("Dia chi: " + diaChi);
+        System.out.println("So khach hang: " + dem);
+        System.out.println("--------------------");
+    }
+}
+    public void themNhieuKhachHang(KhachHang[] ds, int k) {
+    if (ds == null || k < 0 || k > ds.length) {
+        System.out.println("Danh sach khong hop le!");
+        return;
+    }
+
+    for (int i = 0; i < k; i++) {
+        themKhachHang(ds[i]);
+    }
+}
 }
