@@ -1,7 +1,14 @@
+
 package manager;
+
 import entity.SanPham;
 import entity.MayTinh;
 import entity.ChiTietSanPham;
+import entity.CPU;
+import entity.RAM;
+import entity.CardDoHoa;
+import entity.OCung;
+import entity.Nguon;
 
 import interfaces.IFileIO;
 import utils.FileUtil;
@@ -442,6 +449,7 @@ public class QuanLySanPham implements IFileIO {
                 continue;
             }
 
+            // May tinh
             if (sp instanceof MayTinh) {
 
                 MayTinh mt = (MayTinh) sp;
@@ -461,6 +469,7 @@ public class QuanLySanPham implements IFileIO {
                   .append("\n");
             }
 
+            // Chi tiet san pham
             else if (sp instanceof ChiTietSanPham) {
 
                 ChiTietSanPham ct = (ChiTietSanPham) sp;
@@ -476,6 +485,108 @@ public class QuanLySanPham implements IFileIO {
                   .append(ct.getSoSeri()).append(";")
                   .append(ct.getMaSPChiTiet()).append(";")
                   .append(ct.getTrangThai())
+                  .append("\n");
+            }
+
+            // CPU
+            else if (sp instanceof CPU) {
+
+                CPU cpu = (CPU) sp;
+
+                sb.append("CPU;")
+                  .append(cpu.getMaSP()).append(";")
+                  .append(cpu.getTenSP()).append(";")
+                  .append(cpu.getHangSX()).append(";")
+                  .append(cpu.getGiaNhap()).append(";")
+                  .append(cpu.getGiaBan()).append(";")
+                  .append(cpu.getSoLuongTon()).append(";")
+                  .append(cpu.getBaoHanh()).append(";")
+                  .append(cpu.getLoaiLinhKien()).append(";")
+                  .append(cpu.getThongSoKyThuat()).append(";")
+                  .append(cpu.getSocket()).append(";")
+                  .append(cpu.getSoNhan()).append(";")
+                  .append(cpu.getXungNhip())
+                  .append("\n");
+            }
+
+            // RAM
+            else if (sp instanceof RAM) {
+
+                RAM ram = (RAM) sp;
+
+                sb.append("RAM;")
+                  .append(ram.getMaSP()).append(";")
+                  .append(ram.getTenSP()).append(";")
+                  .append(ram.getHangSX()).append(";")
+                  .append(ram.getGiaNhap()).append(";")
+                  .append(ram.getGiaBan()).append(";")
+                  .append(ram.getSoLuongTon()).append(";")
+                  .append(ram.getBaoHanh()).append(";")
+                  .append(ram.getLoaiLinhKien()).append(";")
+                  .append(ram.getThongSoKyThuat()).append(";")
+                  .append(ram.getDungLuong()).append(";")
+                  .append(ram.getLoaiRAM()).append(";")
+                  .append(ram.getTocDoBus())
+                  .append("\n");
+            }
+
+            // Card do hoa
+            else if (sp instanceof CardDoHoa) {
+
+                CardDoHoa card = (CardDoHoa) sp;
+
+                sb.append("GPU;")
+                  .append(card.getMaSP()).append(";")
+                  .append(card.getTenSP()).append(";")
+                  .append(card.getHangSX()).append(";")
+                  .append(card.getGiaNhap()).append(";")
+                  .append(card.getGiaBan()).append(";")
+                  .append(card.getSoLuongTon()).append(";")
+                  .append(card.getBaoHanh()).append(";")
+                  .append(card.getLoaiLinhKien()).append(";")
+                  .append(card.getThongSoKyThuat()).append(";")
+                  .append(card.getDungLuongVRAM()).append(";")
+                  .append(card.getChipDoHoa())
+                  .append("\n");
+            }
+
+            // O cung
+            else if (sp instanceof OCung) {
+
+                OCung oCung = (OCung) sp;
+
+                sb.append("OC;")
+                  .append(oCung.getMaSP()).append(";")
+                  .append(oCung.getTenSP()).append(";")
+                  .append(oCung.getHangSX()).append(";")
+                  .append(oCung.getGiaNhap()).append(";")
+                  .append(oCung.getGiaBan()).append(";")
+                  .append(oCung.getSoLuongTon()).append(";")
+                  .append(oCung.getBaoHanh()).append(";")
+                  .append(oCung.getLoaiLinhKien()).append(";")
+                  .append(oCung.getThongSoKyThuat()).append(";")
+                  .append(oCung.getDungLuong()).append(";")
+                  .append(oCung.getLoaiOCung())
+                  .append("\n");
+            }
+
+            // Nguon
+            else if (sp instanceof Nguon) {
+
+                Nguon nguon = (Nguon) sp;
+
+                sb.append("PSU;")
+                  .append(nguon.getMaSP()).append(";")
+                  .append(nguon.getTenSP()).append(";")
+                  .append(nguon.getHangSX()).append(";")
+                  .append(nguon.getGiaNhap()).append(";")
+                  .append(nguon.getGiaBan()).append(";")
+                  .append(nguon.getSoLuongTon()).append(";")
+                  .append(nguon.getBaoHanh()).append(";")
+                  .append(nguon.getLoaiLinhKien()).append(";")
+                  .append(nguon.getThongSoKyThuat()).append(";")
+                  .append(nguon.getCongSuat()).append(";")
+                  .append(nguon.getChungNhan())
                   .append("\n");
             }
         }
@@ -496,7 +607,6 @@ public class QuanLySanPham implements IFileIO {
             return;
         }
 
-        // Doc vao mang tam de tranh mat du lieu cu neu co loi
         SanPham[] danhSachCu = danhSach;
         int soLuongCu = soLuong;
 
@@ -515,41 +625,129 @@ public class QuanLySanPham implements IFileIO {
 
             try {
 
-                if (data[0].equals("M") && data.length == 12) {
+                String loai = data[0];
 
-                    MayTinh mt = new MayTinh(
-                        data[1],
-                        data[2],
-                        data[3],
+                // May tinh
+                if (loai.equals("M") && data.length == 12) {
+
+                    SanPham sp = new MayTinh(
+                        data[1], data[2], data[3],
                         Double.parseDouble(data[4]),
                         Double.parseDouble(data[5]),
                         Integer.parseInt(data[6]),
                         Integer.parseInt(data[7]),
-                        data[8],
-                        data[9],
+                        data[8], data[9],
                         Integer.parseInt(data[10]),
                         Integer.parseInt(data[11])
                     );
 
-                    themSanPham(mt);
+                    themSanPham(sp);
                 }
 
-                else if (data[0].equals("C") && data.length == 11) {
+                // Chi tiet san pham
+                else if (loai.equals("C") && data.length == 11) {
 
-                    ChiTietSanPham ct = new ChiTietSanPham(
-                        data[1],
-                        data[2],
-                        data[3],
+                    SanPham sp = new ChiTietSanPham(
+                        data[1], data[2], data[3],
                         Double.parseDouble(data[4]),
                         Double.parseDouble(data[5]),
                         Integer.parseInt(data[6]),
                         Integer.parseInt(data[7]),
-                        data[8],
-                        data[9],
-                        data[10]
+                        data[8], data[9], data[10]
                     );
 
-                    themSanPham(ct);
+                    themSanPham(sp);
+                }
+
+                // CPU
+                else if (loai.equals("CPU") && data.length == 13) {
+
+                    SanPham sp = new CPU(
+                        data[1], data[2], data[3],
+                        Double.parseDouble(data[4]),
+                        Double.parseDouble(data[5]),
+                        Integer.parseInt(data[6]),
+                        Integer.parseInt(data[7]),
+                        data[8], data[9],
+                        data[10],
+                        Integer.parseInt(data[11]),
+                        Double.parseDouble(data[12])
+                    );
+
+                    themSanPham(sp);
+                }
+
+                // RAM
+                else if (loai.equals("RAM") && data.length == 13) {
+
+                    SanPham sp = new RAM(
+                        data[1], data[2], data[3],
+                        Double.parseDouble(data[4]),
+                        Double.parseDouble(data[5]),
+                        Integer.parseInt(data[6]),
+                        Integer.parseInt(data[7]),
+                        data[8], data[9],
+                        Integer.parseInt(data[10]),
+                        data[11],
+                        Integer.parseInt(data[12])
+                    );
+
+                    themSanPham(sp);
+                }
+
+                // Card do hoa
+                else if (loai.equals("GPU") && data.length == 12) {
+
+                    SanPham sp = new CardDoHoa(
+                        data[1], data[2], data[3],
+                        Double.parseDouble(data[4]),
+                        Double.parseDouble(data[5]),
+                        Integer.parseInt(data[6]),
+                        Integer.parseInt(data[7]),
+                        data[8], data[9],
+                        Integer.parseInt(data[10]),
+                        data[11]
+                    );
+
+                    themSanPham(sp);
+                }
+
+                // O cung
+                else if (loai.equals("OC") && data.length == 12) {
+
+                    SanPham sp = new OCung(
+                        data[1], data[2], data[3],
+                        Double.parseDouble(data[4]),
+                        Double.parseDouble(data[5]),
+                        Integer.parseInt(data[6]),
+                        Integer.parseInt(data[7]),
+                        data[8], data[9],
+                        Integer.parseInt(data[10]),
+                        data[11]
+                    );
+
+                    themSanPham(sp);
+                }
+
+                // Nguon
+                else if (loai.equals("PSU") && data.length == 12) {
+
+                    Nguon nguon = new Nguon(
+                        data[1],
+                        data[2],
+                        data[3],
+                        Double.parseDouble(data[5]),
+                        Integer.parseInt(data[6]),
+                        Integer.parseInt(data[10]),
+                        data[11]
+                    );
+
+                    nguon.setGiaNhap(Double.parseDouble(data[4]));
+                    nguon.setBaoHanh(Integer.parseInt(data[7]));
+                    nguon.setLoaiLinhKien(data[8]);
+                    nguon.setThongSoKyThuat(data[9]);
+
+                    themSanPham(nguon);
                 }
 
                 else {
@@ -559,17 +757,29 @@ public class QuanLySanPham implements IFileIO {
                 }
 
             } catch (NumberFormatException e) {
+
                 System.out.println(
                     "Loi du lieu tai dong: " + dong
+                );
+
+            } catch (Exception e) {
+
+                System.out.println(
+                    "Khong the doc dong: " + dong
                 );
             }
         }
 
         // Neu khong doc duoc san pham nao thi giu danh sach cu
         if (soLuong == 0) {
+
             danhSach = danhSachCu;
             soLuong = soLuongCu;
-            System.out.println("Khong doc duoc san pham, giu du lieu cu!");
+
+            System.out.println(
+                "Khong doc duoc san pham, giu du lieu cu!"
+            );
+
             return;
         }
 
