@@ -1,27 +1,27 @@
+
 package manager;
 
 import entity.NhanVien;
 import entity.QuanLy;
 import interfaces.IFileIO;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import utils.FileUtil;
 import java.util.Objects;
 
 public class QuanLyNhanVien implements IFileIO {
+
     private NhanVien[] danhSach;
     private int soLuong;
 
     public QuanLyNhanVien() {
         danhSach = new NhanVien[10];
+        soLuong = 0;
     }
 
     public int getSoLuong() {
         return soLuong;
     }
 
+    // Them nhan vien
     public boolean themNhanVien(NhanVien nv) {
         if (nv == null || soLuong == danhSach.length) {
             return false;
@@ -38,115 +38,172 @@ public class QuanLyNhanVien implements IFileIO {
         return true;
     }
 
+    // Sua thong tin nhan vien
     public boolean suaThongTinNhanVien(String maNV, int luaChon, String giaTriMoi) {
         for (int i = 0; i < soLuong; i++) {
             NhanVien nv = danhSach[i];
 
             if (Objects.equals(nv.getMaNV(), maNV)) {
-                switch (luaChon) {
-                    case 1:
-                        nv.setHoTen(giaTriMoi);
-                        break;
-                    case 2:
-                        nv.setNgaySinh(giaTriMoi);
-                        break;
-                    case 3:
-                        nv.setSoDienThoai(giaTriMoi);
-                        break;
-                    case 4:
-                        nv.setEmail(giaTriMoi);
-                        break;
-                    case 5:
-                        nv.setLuongCoBan(Double.parseDouble(giaTriMoi));
-                        break;
-                    case 6:
-                        nv.setPhuCap(Double.parseDouble(giaTriMoi));
-                        break;
-                    case 7:
-                        nv.setTienThuong(Double.parseDouble(giaTriMoi));
-                        break;
-                    default:
-                        return false;
+                try {
+                    switch (luaChon) {
+                        case 1:
+                            nv.setHoTen(giaTriMoi);
+                            break;
+                        case 2:
+                            nv.setNgaySinh(giaTriMoi);
+                            break;
+                        case 3:
+                            nv.setSoDienThoai(giaTriMoi);
+                            break;
+                        case 4:
+                            nv.setEmail(giaTriMoi);
+                            break;
+                        case 5:
+                            nv.setLuongCoBan(Double.parseDouble(giaTriMoi));
+                            break;
+                        case 6:
+                            nv.setPhuCap(Double.parseDouble(giaTriMoi));
+                            break;
+                        case 7:
+                            nv.setTienThuong(Double.parseDouble(giaTriMoi));
+                            break;
+                        default:
+                            return false;
+                    }
+                } catch (NumberFormatException e) {
+                    return false;
                 }
+
                 return true;
             }
         }
+
         return false;
     }
 
+    // Xoa nhan vien
     public boolean xoaNhanVien(String maNV) {
         for (int i = 0; i < soLuong; i++) {
             if (Objects.equals(danhSach[i].getMaNV(), maNV)) {
                 for (int j = i; j < soLuong - 1; j++) {
                     danhSach[j] = danhSach[j + 1];
                 }
+
                 danhSach[soLuong - 1] = null;
                 soLuong--;
                 return true;
             }
         }
+
         return false;
     }
 
+    // Tim nhan vien
     public boolean timNhanVien(String maNV) {
-        for (int i = 0; i < soLuong; i++){
+        for (int i = 0; i < soLuong; i++) {
             if (Objects.equals(danhSach[i].getMaNV(), maNV)) {
                 danhSach[i].hienThiThongTin();
                 return true;
             }
         }
+
         return false;
     }
 
- public void hienThiDanhSach() {
-    if (soLuong == 0) {
-        System.out.println("Danh sách nhân viên đang trống.");
-        return;
-    }
+    // Hien thi danh sach
+    public void hienThiDanhSach() {
+        if (soLuong == 0) {
+            System.out.println("Danh sach nhan vien dang trong.");
+            return;
+        }
 
-    for (int i = 0; i < soLuong; i++) {
-        System.out.println("Nhân viên thứ " + (i + 1) + ":");
-        danhSach[i].hienThiThongTin();
-        System.out.println("--------------------");
-    }
-}
-
-    @Override
-    public void ghiFile(String tenFile) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(tenFile))) {
-            for (int i = 0; i < soLuong; i++) {
-                QuanLy nv = (QuanLy) danhSach[i];
-
-                writer.write(nv.getHoTen() + ";"
-                        + nv.getNgaySinh() + ";"
-                        + nv.getSoDienThoai() + ";"
-                        + nv.getEmail() + ";"
-                        + nv.getMaNV() + ";"
-                        + nv.getLuongCoBan() + ";"
-                        + nv.getPhuCap() + ";"
-                        + nv.getTienThuong() + ";"
-                        + nv.getPhuCapChucVu());
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            System.out.println("Lỗi khi ghi file: " + e.getMessage());
+        for (int i = 0; i < soLuong; i++) {
+            System.out.println("Nhan vien thu " + (i + 1) + ":");
+            danhSach[i].hienThiThongTin();
+            System.out.println("--------------------");
         }
     }
 
+    // Ghi file
     @Override
-    public void docFIle(String tenFile) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(tenFile))) {
-            String dong;
-            soLuong = 0;
+    public void ghiFile(String tenFile) {
+        StringBuilder noiDung = new StringBuilder();
 
-            while ((dong = reader.readLine()) != null) {
-                String[] thongTin = dong.split(";");
+        for (int i = 0; i < soLuong; i++) {
+            NhanVien nv = danhSach[i];
+
+            noiDung.append(nv.getHoTen()).append(";")
+                   .append(nv.getNgaySinh()).append(";")
+                   .append(nv.getSoDienThoai()).append(";")
+                   .append(nv.getEmail()).append(";")
+                   .append(nv.getMaNV()).append(";")
+                   .append(nv.getLuongCoBan()).append(";")
+                   .append(nv.getPhuCap()).append(";")
+                   .append(nv.getTienThuong());
+
+            // Neu la QuanLy thi ghi them phu cap chuc vu
+            if (nv instanceof QuanLy) {
+                QuanLy ql = (QuanLy) nv;
+                noiDung.append(";").append(ql.getPhuCapChucVu());
+            } else {
+                noiDung.append(";");
+                // Nhan vien thuong khong co phu cap chuc vu
+            }
+
+            if (i < soLuong - 1) {
+                noiDung.append(System.lineSeparator());
+            }
+        }
+
+        FileUtil.ghiChuoi(tenFile, noiDung.toString());
+    }
+
+    // Doc file
+    @Override
+    public void docFile(String tenFile) {
+        String noiDung = FileUtil.docChuoi(tenFile);
+
+        soLuong = 0;
+
+        for (int i = 0; i < danhSach.length; i++) {
+            danhSach[i] = null;
+        }
+
+        if (noiDung == null || noiDung.isEmpty()) {
+            System.out.println("File nhan vien rong.");
+            return;
+        }
+
+        String[] cacDong = noiDung.split("\\R");
+
+        for (String dong : cacDong) {
+            if (dong.isEmpty()) {
+                continue;
+            }
+
+            String[] thongTin = dong.split(";", -1);
+
+            try {
                 if (thongTin.length != 9) {
-                    System.out.println("Dòng dữ liệu không hợp lệ: " + dong);
+                    System.out.println("Dong du lieu khong hop le: " + dong);
                     continue;
                 }
 
-                QuanLy nv = new QuanLy(
+                NhanVien nv;
+
+                if (thongTin[8].isEmpty()) {
+                    nv = new NhanVien(
+                        thongTin[0],
+                        thongTin[1],
+                        thongTin[2],
+                        thongTin[3],
+                        thongTin[4],
+                        Double.parseDouble(thongTin[5]),
+                        Double.parseDouble(thongTin[6]),
+                        Double.parseDouble(thongTin[7])
+                    );
+                } else {
+                    nv = new QuanLy(
                         thongTin[0],
                         thongTin[1],
                         thongTin[2],
@@ -155,14 +212,17 @@ public class QuanLyNhanVien implements IFileIO {
                         Double.parseDouble(thongTin[5]),
                         Double.parseDouble(thongTin[6]),
                         Double.parseDouble(thongTin[7]),
-                        Double.parseDouble(thongTin[8]));
+                        Double.parseDouble(thongTin[8])
+                    );
+                }
 
                 if (!themNhanVien(nv)) {
-                    System.out.println("Không thể thêm nhân viên: " + nv.getMaNV());
+                    System.out.println("Khong the them nhan vien: " + nv.getMaNV());
                 }
+
+            } catch (NumberFormatException e) {
+                System.out.println("Du lieu so khong hop le: " + dong);
             }
-        } catch (IOException e) {
-            System.out.println("Lỗi khi đọc file: " + e.getMessage());
         }
     }
 }
