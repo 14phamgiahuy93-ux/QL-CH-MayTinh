@@ -271,5 +271,160 @@ public class QuanLyHoaDon implements IFileIO {
 
         System.out.println("Doc file hoa don thanh cong!");
     }
+    public void suaHoaDon(String maHD) {
+    HoaDon hd = layHoaDon(maHD);
+
+    if (hd == null) {
+        System.out.println("Khong tim thay hoa don!");
+        return;
+    }
+
+    java.util.Scanner sc = new java.util.Scanner(System.in);
+
+    System.out.print("Nhap ngay lap moi: ");
+    hd.setNgayLap(sc.nextLine());
+
+    System.out.print("Nhap ma nhan vien moi: ");
+    String maNV = sc.nextLine();
+
+    NhanVien nv = qlnv.layNhanVien(maNV);
+
+    if (nv == null) {
+        System.out.println("Khong tim thay nhan vien!");
+        return;
+    }
+
+    System.out.print("Nhap ma khach hang moi: ");
+    String maKH = sc.nextLine();
+
+    KhachHang kh = qlkh.layKhachHang(maKH);
+
+    if (kh == null) {
+        System.out.println("Khong tim thay khach hang!");
+        return;
+    }
+
+    hd.setNhanVien(nv);
+    hd.setKhachHang(kh);
+
+    System.out.println("Sua hoa don thanh cong!");
+}
+    public void timHoaDonNhieuTieuChi(String tuKhoa) {
+    boolean timThay = false;
+
+    // Tim chinh xac
+    for (int i = 0; i < soLuong; i++) {
+        HoaDon hd = danhSach[i];
+
+        if (hd.getMaHD().equalsIgnoreCase(tuKhoa)
+                || hd.getNgayLap().equalsIgnoreCase(tuKhoa)
+                || hd.getNhanVien().getHoTen().equalsIgnoreCase(tuKhoa)
+                || hd.getKhachHang().getHoTen().equalsIgnoreCase(tuKhoa)) {
+
+            hd.hienThi();
+            timThay = true;
+        }
+    }
+
+    // Neu khong co ket qua chinh xac thi tim gan dung
+    if (!timThay) {
+        for (int i = 0; i < soLuong; i++) {
+            HoaDon hd = danhSach[i];
+
+            if (hd.getMaHD().toLowerCase().contains(tuKhoa.toLowerCase())
+                    || hd.getNgayLap().toLowerCase().contains(tuKhoa.toLowerCase())
+                    || hd.getNhanVien().getHoTen().toLowerCase().contains(tuKhoa.toLowerCase())
+                    || hd.getKhachHang().getHoTen().toLowerCase().contains(tuKhoa.toLowerCase())) {
+
+                hd.hienThi();
+                timThay = true;
+            }
+        }
+    }
+
+    if (!timThay) {
+        System.out.println("Khong tim thay hoa don!");
+    }
+}
+    public void thongKeTheoNhanVien() {
+    for (int i = 0; i < soLuong; i++) {
+        NhanVien nv = danhSach[i].getNhanVien();
+
+        if (nv == null) continue;
+
+        boolean daThongKe = false;
+
+        for (int j = 0; j < i; j++) {
+            if (danhSach[j].getNhanVien() != null
+                    && danhSach[j].getNhanVien().getMaNV().equals(nv.getMaNV())) {
+                daThongKe = true;
+                break;
+            }
+        }
+
+        if (daThongKe) continue;
+
+        int dem = 0;
+        double tongTien = 0;
+
+        for (int j = 0; j < soLuong; j++) {
+            if (danhSach[j].getNhanVien() != null
+                    && danhSach[j].getNhanVien().getMaNV().equals(nv.getMaNV())) {
+                dem++;
+                tongTien += danhSach[j].tinhTongTien();
+            }
+        }
+
+        System.out.println("Nhan vien: " + nv.getHoTen());
+        System.out.println("So hoa don: " + dem);
+        System.out.println("Tong doanh thu: " + tongTien);
+        System.out.println("--------------------");
+    }
+}
+    public void thongKeTheoKhachHang() {
+    for (int i = 0; i < soLuong; i++) {
+        KhachHang kh = danhSach[i].getKhachHang();
+
+        if (kh == null) continue;
+
+        boolean daThongKe = false;
+
+        for (int j = 0; j < i; j++) {
+            if (danhSach[j].getKhachHang() != null
+                    && danhSach[j].getKhachHang().getMaKH().equals(kh.getMaKH())) {
+                daThongKe = true;
+                break;
+            }
+        }
+
+        if (daThongKe) continue;
+
+        int dem = 0;
+        double tongTien = 0;
+
+        for (int j = 0; j < soLuong; j++) {
+            if (danhSach[j].getKhachHang() != null
+                    && danhSach[j].getKhachHang().getMaKH().equals(kh.getMaKH())) {
+                dem++;
+                tongTien += danhSach[j].tinhTongTien();
+            }
+        }
+
+        System.out.println("Khach hang: " + kh.getHoTen());
+        System.out.println("So hoa don: " + dem);
+        System.out.println("Tong tien mua: " + tongTien);
+        System.out.println("--------------------");
+    }
+}
+    public void themNhieuHoaDon(HoaDon[] ds, int k) {
+    if (ds == null || k < 0 || k > ds.length) {
+        System.out.println("Danh sach khong hop le!");
+        return;
+    }
+
+    for (int i = 0; i < k; i++) {
+        themHoaDon(ds[i]);
+    }
+}
 }
 
