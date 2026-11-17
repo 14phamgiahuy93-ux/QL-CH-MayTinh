@@ -1,4 +1,5 @@
 package manager;
+
 import entity.PhieuNhap;
 import entity.ChiTietPhieuNhap;
 import entity.NhaCungCap;
@@ -8,8 +9,6 @@ import entity.SanPham;
 import interfaces.IFileIO;
 import utils.FileUtil;
 
-import java.util.Arrays;
-import entity.PhieuNhap;
 import java.util.Arrays;
 
 public class QuanLyPhieuNhap implements IFileIO {
