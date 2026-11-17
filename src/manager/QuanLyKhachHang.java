@@ -148,7 +148,7 @@ public class QuanLyKhachHang implements IFileIO {
     }
 
     @Override
-    public void docFIle(String tenFile) {
+    public void docFile(String tenFile) {
         try (BufferedReader reader = new BufferedReader(new FileReader(tenFile))) {
             String dong;
             soLuong = 0;
