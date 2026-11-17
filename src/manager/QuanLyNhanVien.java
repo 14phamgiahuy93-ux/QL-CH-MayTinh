@@ -22,9 +22,13 @@ public class QuanLyNhanVien implements IFileIO {
     // 1. Them nhan vien
     public boolean themNhanVien(NhanVien nv) {
 
-        if (nv == null || soLuong == danhSach.length) {
+        if (nv == null) {
             return false;
         }
+
+        if (soLuong == danhSach.length) {
+            danhSach = java.util.Arrays.copyOf(danhSach, danhSach.length * 2);
+            }
 
         // Kiem tra trung ma nhan vien
         for (int i = 0; i < soLuong; i++) {
@@ -241,7 +245,9 @@ public class QuanLyNhanVien implements IFileIO {
 
     // 8. Lay nhan vien theo ma
     public NhanVien layNhanVien(String maNV) {
-
+            if (maNV == null) {
+                return null;
+            }
         for (int i = 0; i < soLuong; i++) {
 
             if (danhSach[i].getMaNV().equalsIgnoreCase(maNV)) {
@@ -251,4 +257,81 @@ public class QuanLyNhanVien implements IFileIO {
 
         return null;
     }
+    public void themNhieuNhanVien(NhanVien[] ds, int k) {
+
+    if (ds == null || k < 0 || k > ds.length) {
+        System.out.println("Danh sach khong hop le!");
+        return;
+    }
+
+    for (int i = 0; i < k; i++) {
+        if (themNhanVien(ds[i])) {
+            System.out.println("Them nhan vien thanh cong!");
+        } else {
+            System.out.println("Khong the them nhan vien thu " + (i + 1));
+        }
+    }
+}
+    public void timNhanVienNhieuTieuChi(String tuKhoa) {
+
+    if (tuKhoa == null || tuKhoa.trim().isEmpty()) {
+        System.out.println("Tu khoa khong hop le!");
+        return;
+    }
+
+    tuKhoa = tuKhoa.trim();
+    boolean timThay = false;
+
+    // Tim chinh xac
+    for (int i = 0; i < soLuong; i++) {
+        NhanVien nv = danhSach[i];
+
+        if (nv.getMaNV().equalsIgnoreCase(tuKhoa)
+                || nv.getHoTen().equalsIgnoreCase(tuKhoa)
+                || nv.getSoDienThoai().equalsIgnoreCase(tuKhoa)
+                || nv.getEmail().equalsIgnoreCase(tuKhoa)) {
+
+            nv.hienThiThongTin();
+            timThay = true;
+        }
+    }
+
+    // Tim gan dung neu khong co ket qua chinh xac
+    if (!timThay) {
+        for (int i = 0; i < soLuong; i++) {
+            NhanVien nv = danhSach[i];
+
+            if (nv.getMaNV().toLowerCase().contains(tuKhoa.toLowerCase())
+                    || nv.getHoTen().toLowerCase().contains(tuKhoa.toLowerCase())
+                    || nv.getSoDienThoai().contains(tuKhoa)
+                    || nv.getEmail().toLowerCase().contains(tuKhoa.toLowerCase())) {
+
+                nv.hienThiThongTin();
+                timThay = true;
+            }
+        }
+    }
+
+    if (!timThay) {
+        System.out.println("Khong tim thay nhan vien!");
+    }
+}
+    public void thongKeTheoLoaiNhanVien() {
+
+    int soQuanLy = 0;
+    int soNhanVienKhac = 0;
+
+    for (int i = 0; i < soLuong; i++) {
+
+        if (danhSach[i] instanceof QuanLy) {
+            soQuanLy++;
+        } else {
+            soNhanVienKhac++;
+        }
+    }
+
+    System.out.println("So luong quan ly: " + soQuanLy);
+    System.out.println("So luong nhan vien khac: " + soNhanVienKhac);
+    System.out.println("Tong so nhan vien: " + soLuong);
+}
 }
