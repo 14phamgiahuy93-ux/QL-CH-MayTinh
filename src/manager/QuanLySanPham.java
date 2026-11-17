@@ -1,6 +1,4 @@
-
 package manager;
-
 import entity.SanPham;
 import entity.MayTinh;
 import entity.ChiTietSanPham;
