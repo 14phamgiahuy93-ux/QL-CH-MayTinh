@@ -1,4 +1,5 @@
 package main;
+
 import manager.QuanLySanPham;
 import manager.QuanLyNhanVien;
 import manager.QuanLyKhachHang;
@@ -7,6 +8,7 @@ import manager.QuanLyPhieuNhap;
 
 import entity.SanPham;
 import entity.MayTinh;
+import entity.ChiTietSanPham;
 import entity.CPU;
 import entity.RAM;
 import entity.CardDoHoa;
@@ -81,6 +83,8 @@ public class Main {
         } while (luaChon != 0);
     }
 
+    // ================= KHOI TAO VA FILE =================
+
     private static void khoiTaoQuanLy() {
         qlsp = new QuanLySanPham();
         qlnv = new QuanLyNhanVien();
@@ -135,48 +139,60 @@ public class Main {
             System.out.println("11. Sap xep san pham theo gia");
             System.out.println("12. Kiem tra ton kho");
             System.out.println("13. Thong ke san pham");
+            System.out.println("14. Them chi tiet san pham");
             System.out.println("0. Quay lai");
 
-            luaChon = Validator.readInt("Nhap lua chon: ", 0, 13);
+            luaChon = Validator.readInt("Nhap lua chon: ", 0, 14);
 
             switch (luaChon) {
-                case 1: themMayTinh(); break;
-                case 2: themCPU(); break;
-                case 3: themRAM(); break;
-                case 4: themCardDoHoa(); break;
-                case 5: themOCung(); break;
-                case 6: themNguon(); break;
-                case 7: qlsp.hienThiDanhSach(); break;
-
+                case 1:
+                    themMayTinh();
+                    break;
+                case 2:
+                    themCPU();
+                    break;
+                case 3:
+                    themRAM();
+                    break;
+                case 4:
+                    themCardDoHoa();
+                    break;
+                case 5:
+                    themOCung();
+                    break;
+                case 6:
+                    themNguon();
+                    break;
+                case 7:
+                    qlsp.hienThiDanhSach();
+                    break;
                 case 8: {
                     String maSP = Validator.readString("Nhap ma san pham: ");
                     qlsp.timSanPham(maSP);
                     break;
                 }
-
                 case 9: {
                     String maSP = Validator.readString("Nhap ma san pham can sua: ");
                     qlsp.suaSanPham(maSP);
                     break;
                 }
-
                 case 10: {
                     String maSP = Validator.readString("Nhap ma san pham can xoa: ");
                     qlsp.xoaSanPham(maSP);
                     break;
                 }
-
                 case 11:
                     qlsp.sapXepTheoGia();
                     qlsp.hienThiDanhSach();
                     break;
-
                 case 12:
                     qlsp.kiemTraTonKho();
                     break;
-
                 case 13:
                     qlsp.thongKeTheoNhieuKhoa();
+                    break;
+                case 14:
+                    themChiTietSanPham();
                     break;
             }
 
@@ -361,6 +377,38 @@ public class Main {
         nguon.setThongSoKyThuat(thongSo);
 
         qlsp.themSanPham(nguon);
+    }
+
+    private static void themChiTietSanPham() {
+
+        System.out.println("\n========== THEM CHI TIET SAN PHAM ==========");
+
+        String maSP = Validator.readString("Nhap ma san pham: ");
+        String tenSP = Validator.readString("Nhap ten san pham: ");
+        String hangSX = Validator.readString("Nhap hang san xuat: ");
+
+        double giaNhap = Validator.readDouble("Nhap gia nhap: ", 0);
+        double giaBan = Validator.readDouble("Nhap gia ban: ", 0);
+
+        int soLuongTon = Validator.readInt(
+                "Nhap so luong ton: ", 0, Integer.MAX_VALUE
+        );
+
+        int baoHanh = Validator.readInt(
+                "Nhap bao hanh (thang): ", 0, 120
+        );
+
+        String soSeri = Validator.readString("Nhap so seri: ");
+        String maSPChiTiet = Validator.readString("Nhap ma san pham chi tiet: ");
+        String trangThai = Validator.readString("Nhap trang thai san pham: ");
+
+        ChiTietSanPham sp = new ChiTietSanPham(
+                maSP, tenSP, hangSX,
+                giaNhap, giaBan, soLuongTon, baoHanh,
+                soSeri, maSPChiTiet, trangThai
+        );
+
+        qlsp.themSanPham(sp);
     }
 
     // ================= NHAN VIEN =================
@@ -720,7 +768,6 @@ public class Main {
             }
 
             int soLuong = Validator.readInt("Nhap so luong nhap: ", 1, 100000);
-
             double donGiaNhap = Validator.readDouble("Nhap don gia nhap: ", 0);
 
             ChiTietPhieuNhap ct = new ChiTietPhieuNhap(
