@@ -24,7 +24,9 @@ public class RAM extends LinhKien {
     }
 
     public void setDungLuong(int dungLuong){
+         if (dungLuong >= 0) {
         this.dungLuong = dungLuong;
+        }
     }
 
     public String getLoaiRAM(){
@@ -40,7 +42,9 @@ public class RAM extends LinhKien {
     }
 
     public void setTocDoBus(int tocDoBus){
+            if (tocDoBus >= 0) {
         this.tocDoBus = tocDoBus;
+        }
     }
 
     // Ghi de phuong thuc

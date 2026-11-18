@@ -1,27 +1,27 @@
 package entity;
-
 public class ChiTietPhieuNhap {
+
     private SanPham sanPham;
     private int soLuong;
     private double donGiaNhap;
 
-    // Constructor mặc định
+    // Constructor mac dinh
     public ChiTietPhieuNhap() {
     }
 
-    // Constructor có tham số
+    // Constructor co tham so
     public ChiTietPhieuNhap(SanPham sanPham, int soLuong, double donGiaNhap) {
         this.sanPham = sanPham;
-        this.soLuong = soLuong;
-        this.donGiaNhap = donGiaNhap;
+        setSoLuong(soLuong);
+        setDonGiaNhap(donGiaNhap);
     }
 
-    // Phương thức tính thành tiền
+    // Tinh thanh tien
     public double tinhThanhTien() {
-        return this.soLuong * this.donGiaNhap;
+        return soLuong * donGiaNhap;
     }
 
-    // Getter và Setter
+    // Getter va Setter
     public SanPham getSanPham() {
         return sanPham;
     }
@@ -35,7 +35,11 @@ public class ChiTietPhieuNhap {
     }
 
     public void setSoLuong(int soLuong) {
-        this.soLuong = soLuong;
+        if (soLuong > 0) {
+            this.soLuong = soLuong;
+        } else {
+            System.out.println("So luong phai lon hon 0!");
+        }
     }
 
     public double getDonGiaNhap() {
@@ -43,12 +47,25 @@ public class ChiTietPhieuNhap {
     }
 
     public void setDonGiaNhap(double donGiaNhap) {
-        this.donGiaNhap = donGiaNhap;
+        if (donGiaNhap >= 0 && Double.isFinite(donGiaNhap)) {
+            this.donGiaNhap = donGiaNhap;
+        } else {
+            System.out.println("Don gia nhap khong hop le!");
+        }
     }
 
+    // Hien thi chi tiet phieu nhap
     public void hienThi() {
-        String tenSP = (sanPham != null) ? sanPham.getTenSP() : "N/A";
-        System.out.printf("  - Sản phẩm: %s | Số lượng: %d | Đơn giá: %.2f | Thành tiền: %.2f\n", 
-                tenSP, soLuong, donGiaNhap, tinhThanhTien());
+
+        String tenSP = sanPham != null
+                ? sanPham.getTenSP() : "N/A";
+
+        System.out.printf(
+            "  - San pham: %s | So luong: %d | Don gia: %.2f | Thanh tien: %.2f%n",
+            tenSP,
+            soLuong,
+            donGiaNhap,
+            tinhThanhTien()
+        );
     }
 }
