@@ -644,70 +644,87 @@ public class Main {
 
     private static void lapHoaDon() {
 
-        System.out.println("\n========== LAP HOA DON ==========");
+    System.out.println("\n========== LAP HOA DON ==========");
 
-        String maHD = Validator.readString("Nhap ma hoa don: ");
-        String ngayLap = Validator.readDate("Nhap ngay lap (yyyy-MM-dd): ");
+    String maHD = Validator.readString("Nhap ma hoa don: ");
 
-        String maNV = Validator.readString("Nhap ma nhan vien lap hoa don: ");
-        NhanVien nv = qlnv.layNhanVien(maNV);
+    // Kiem tra ma hoa don trung
+    if (qlhd.layHoaDon(maHD) != null) {
+        System.out.println("Ma hoa don da ton tai!");
+        return;
+    }
 
-        if (nv == null) {
-            System.out.println("Khong tim thay nhan vien!");
-            return;
+    String ngayLap = Validator.readDate("Nhap ngay lap (yyyy-MM-dd): ");
+
+    String maNV = Validator.readString("Nhap ma nhan vien lap hoa don: ");
+    NhanVien nv = qlnv.layNhanVien(maNV);
+
+    if (nv == null) {
+        System.out.println("Khong tim thay nhan vien!");
+        return;
+    }
+
+    String maKH = Validator.readString("Nhap ma khach hang: ");
+    KhachHang kh = qlkh.layKhachHang(maKH);
+
+    if (kh == null) {
+        System.out.println("Khong tim thay khach hang!");
+        return;
+    }
+
+    HoaDon hd = new HoaDon(maHD, ngayLap, nv, kh);
+
+    int soChiTiet = Validator.readInt(
+            "Nhap so loai san pham trong hoa don: ", 1, 100
+    );
+
+    for (int i = 0; i < soChiTiet; i++) {
+
+        System.out.println("\n--- San pham thu " + (i + 1) + " ---");
+
+        String maSP = Validator.readString("Nhap ma san pham: ");
+        SanPham sp = qlsp.laySanPham(maSP);
+
+        if (sp == null) {
+            System.out.println("Khong tim thay san pham. Bo qua chi tiet nay.");
+            continue;
         }
 
-        String maKH = Validator.readString("Nhap ma khach hang: ");
-        KhachHang kh = qlkh.layKhachHang(maKH);
-
-        if (kh == null) {
-            System.out.println("Khong tim thay khach hang!");
-            return;
-        }
-
-        HoaDon hd = new HoaDon(maHD, ngayLap, nv, kh);
-
-        int soChiTiet = Validator.readInt(
-                "Nhap so loai san pham trong hoa don: ", 1, 100
+        int soLuong = Validator.readInt(
+                "Nhap so luong mua: ", 1, 100000
         );
 
-        for (int i = 0; i < soChiTiet; i++) {
-
-            System.out.println("\n--- San pham thu " + (i + 1) + " ---");
-
-            String maSP = Validator.readString("Nhap ma san pham: ");
-            SanPham sp = qlsp.laySanPham(maSP);
-
-            if (sp == null) {
-                System.out.println("Khong tim thay san pham. Bo qua chi tiet nay.");
-                continue;
-            }
-
-            int soLuong = Validator.readInt(
-                    "Nhap so luong mua: ", 1, 100000
-            );
-
-            if (soLuong > sp.getSoLuongTon()) {
-                System.out.println("So luong ton kho khong du. Bo qua chi tiet nay.");
-                continue;
-            }
-
-            double donGia = sp.getGiaBan();
-
-            ChiTietHoaDon ct = new ChiTietHoaDon(sp, soLuong, donGia);
-            hd.themChiTiet(ct);
+        if (soLuong > sp.getSoLuongTon()) {
+            System.out.println("So luong ton kho khong du. Bo qua chi tiet nay.");
+            continue;
         }
 
-        if (hd.getSoLuongChiTiet() == 0) {
-            System.out.println("Hoa don khong co chi tiet hop le!");
-            return;
+        double donGia = sp.getGiaBan();
+
+        // Giam ton kho
+        if (!qlsp.giamTonKho(maSP, soLuong)) {
+            System.out.println("Khong the cap nhat ton kho!");
+            continue;
         }
 
-        qlhd.themHoaDon(hd);
+        // Them chi tiet vao hoa don
+        ChiTietHoaDon ct = new ChiTietHoaDon(sp, soLuong, donGia);
+        hd.themChiTiet(ct);
 
-        System.out.println("Lap hoa don thanh cong!");
-        System.out.println("Tong tien: " + hd.tinhTongTien());
+        System.out.println("Da ban: " + soLuong + " san pham");
+        System.out.println("Ton kho con lai: " + sp.getSoLuongTon());
     }
+
+    if (hd.getSoLuongChiTiet() == 0) {
+        System.out.println("Hoa don khong co chi tiet hop le!");
+        return;
+    }
+
+    qlhd.themHoaDon(hd);
+
+    System.out.println("Lap hoa don thanh cong!");
+    System.out.println("Tong tien: " + hd.tinhTongTien());
+}
 
     // ================= PHIEU NHAP =================
 
