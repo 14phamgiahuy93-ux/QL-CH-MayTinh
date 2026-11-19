@@ -794,4 +794,33 @@ public class QuanLySanPham implements IFileIO {
     public SanPham[] getDanhSach() {
         return danhSach;
     }
+    public boolean giamTonKho(String maSP, int soLuongBan) {
+
+    if (soLuongBan <= 0) {
+        System.out.println("So luong ban phai lon hon 0!");
+        return false;
+    }
+
+    SanPham sp = laySanPham(maSP);
+
+    if (sp == null) {
+        System.out.println("Khong tim thay san pham!");
+        return false;
+    }
+
+    if (sp.getSoLuongTon() < soLuongBan) {
+        System.out.println("Khong du hang trong kho!");
+        return false;
+    }
+
+    sp.setSoLuongTon(
+        sp.getSoLuongTon() - soLuongBan
+    );
+
+    System.out.println("Da cap nhat ton kho!");
+    System.out.println("So luong ton moi: "
+            + sp.getSoLuongTon());
+
+    return true;
+}
 }
