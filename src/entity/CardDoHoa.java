@@ -22,7 +22,7 @@ public class CardDoHoa extends LinhKien {
 
     public void setDungLuongVRAM(int dungLuongVRAM) {
             if (dungLuongVRAM >= 0) {
-        this.dungLuongVRAM = dungLuongVRAM;
+                this.dungLuongVRAM = dungLuongVRAM;
         }
     }
 
